@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einheiten-Umrechner für Kids</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📏 Einheiten-Profi 📐</h1>
+        </header>
+        
+        <section id="settings" class="card">
+            <h2>Einstellungen</h2>
+            <div class="control-group">
+                <label for="mode">Was möchtest du üben?</label>
+                <select id="mode">
+                    <option value="distance">Längen (mm, cm, dm, m, km)</option>
+                    <option value="area">Flächen (mm², cm², dm², m²)</option>
+                    <option value="volume">Volumen (mm³, cm³, dm³, m³)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="difficulty">Schwierigkeit:</label>
+                <select id="difficulty">
+                    <option value="easy">Leicht (Ganze Zahlen, Nachbareinheiten)</option>
+                    <option value="medium">Mittel (Einfache Kommazahlen)</option>
+                    <option value="hard">Schwer (Knifflige Kommazahlen)</option>
+                </select>
+            </div>
+            <button id="start-btn" class="btn primary">Los geht's!</button>
+        </section>
+
+        <section id="game-area" class="card hidden">
+            <div class="score-board">
+                <span>Punkte: <span id="score">0</span></span>
+                <button id="back-btn" class="btn small">Zurück</button>
+            </div>
+            
+            <div class="problem-container">
+                <div class="problem">
+                    <span id="value-display">100</span>
+                    <span id="unit-from">cm</span>
+                    <span>=</span>
+                    <input type="number" id="user-input" step="any" placeholder="?">
+                    <span id="unit-to">m</span>
+                </div>
+                <button id="check-btn" class="btn action">Prüfen</button>
+            </div>
+
+            <div id="feedback" class="feedback hidden"></div>
+            <button id="next-btn" class="btn secondary hidden">Nächste Aufgabe</button>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
