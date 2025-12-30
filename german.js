@@ -117,8 +117,19 @@
             if (wordEl) wordEl.textContent = q ? q.word : '';
             if (feedback) { feedback.className = 'feedback hidden'; feedback.textContent = ''; }
             if (nextBtn) nextBtn.classList.add('hidden');
-            // enable options
-            document.querySelectorAll('#grammar-options .option').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
+            // enable options and hide those not allowed for current difficulty
+            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
+            document.querySelectorAll('#grammar-options .option').forEach(b => {
+                const t = b.getAttribute('data-type');
+                if (!allowed.includes(t)) {
+                    b.style.display = 'none';
+                    b.disabled = true;
+                } else {
+                    b.style.display = '';
+                    b.disabled = false;
+                    b.classList.remove('disabled');
+                }
+            });
         }
 
         function handleOptionClick(e) {
