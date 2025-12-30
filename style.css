@@ -67,6 +67,18 @@ h1 {
     text-align: left;
 }
 
+.button-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: stretch;
+}
+
+.button-row .btn.small {
+    width: auto;
+    align-self: center;
+}
+
 label {
     display: block;
     margin-bottom: 0.5rem;
