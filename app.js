@@ -55,7 +55,25 @@
             if (d.startBtn) d.startBtn.addEventListener('click', () => {
                 const mode = (d.modeSelect && d.modeSelect.value) || 'distance';
                 const difficulty = (d.difficultySelect && d.difficultySelect.value) || 'easy';
-                if (this.modules.groessen && this.modules.groessen.startGame) this.modules.groessen.startGame(mode, difficulty);
+                try {
+                    if (this.modules.groessen && this.modules.groessen.startGame) {
+                        this.modules.groessen.startGame(mode, difficulty);
+                    } else {
+                        console.warn('groessen module not ready; will retry shortly');
+                        // small retry and fallback: show game area so user sees something
+                        setTimeout(() => {
+                            if (this.modules.groessen && this.modules.groessen.startGame) {
+                                this.modules.groessen.startGame(mode, difficulty);
+                            } else {
+                                console.warn('groessen module still not available; showing game-area as fallback');
+                                this.showSection('game-area');
+                            }
+                        }, 120);
+                    }
+                } catch (err) {
+                    console.error('Error starting groessen module', err);
+                    this.showSection('settings');
+                }
             });
             if (d.deutschStartBtn) d.deutschStartBtn.addEventListener('click', () => {
                 const mode = (d.deutschModeSelect && d.deutschModeSelect.value) || 'grammar';
