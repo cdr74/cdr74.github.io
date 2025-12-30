@@ -8,37 +8,31 @@
             questions: []
         };
 
-        const WORDPOOL = {
-            easy: [
-                ['der','artikel'], ['die','artikel'], ['das','artikel'], ['ein','artikel'], ['eine','artikel'], ['einen','artikel'],
-                ['Haus','nomen'], ['Baum','nomen'], ['Tisch','nomen'], ['Auto','nomen'], ['Buch','nomen'], ['Katze','nomen'],
-                ['ich','pronomen'], ['du','pronomen'], ['er','pronomen'], ['sie','pronomen'], ['wir','pronomen'],
-                ['laufen','verb'], ['schreiben','verb'], ['springen','verb'], ['essen','verb'], ['trinken','verb'],
-                ['klein','adjektiv'], ['schnell','adjektiv'], ['laut','adjektiv'], ['ruhig','adjektiv'], ['schön','adjektiv'],
-                ['heute','adverb'], ['gestern','adverb'], ['morgen','adverb'],
-                ['und','konjunktion'], ['aber','konjunktion'], ['oder','konjunktion'],
-                ['auf','praeposition'], ['mit','praeposition'], ['in','praeposition']
-            ],
-            medium: [
-                ['der','artikel'], ['die','artikel'], ['das','artikel'], ['dem','artikel'], ['den','artikel'], ['einem','artikel'],
-                ['Lehrer','nomen'], ['Schule','nomen'], ['Fenster','nomen'], ['Stadt','nomen'], ['Freund','nomen'],
-                ['mich','pronomen'], ['dich','pronomen'], ['uns','pronomen'], ['euch','pronomen'],
-                ['lernen','verb'], ['lesen','verb'], ['schreiben','verb'], ['spielen','verb'], ['arbeiten','verb'],
-                ['kleiner','adjektiv'], ['langsam','adjektiv'], ['interessant','adjektiv'], ['hell','adjektiv'],
-                ['manchmal','adverb'], ['bald','adverb'], ['sofort','adverb'],
-                ['weil','konjunktion'], ['denn','konjunktion'], ['jedoch','konjunktion'],
-                ['unter','praeposition'], ['neben','praeposition'], ['zwischen','praeposition']
-            ],
-            hard: [
-                ['dessen','artikel'], ['welcher','artikel'],
-                ['Gedanke','nomen'], ['Erfahrung','nomen'], ['Bewegung','nomen'],
-                ['jemand','pronomen'], ['niemand','pronomen'],
-                ['erforschen','verb'], ['analysieren','verb'], ['beschreiben','verb'],
-                ['kompliziert','adjektiv'], ['auffällig','adjektiv'], ['verdächtig','adjektiv'],
-                ['soeben','adverb'], ['gelegentlich','adverb'], ['zufällig','adverb'],
-                ['obwohl','konjunktion'], ['während','konjunktion'], ['sodass','konjunktion'],
-                ['während','praeposition'], ['trotz','praeposition'], ['wegen','praeposition']
-            ]
+        // central combined word pool (same pool used for all difficulty levels)
+        const WORDPOOL_ALL = [
+            // articles
+            ['der','artikel'], ['die','artikel'], ['das','artikel'], ['dem','artikel'], ['den','artikel'], ['ein','artikel'], ['eine','artikel'], ['einem','artikel'], ['einen','artikel'], ['dessen','artikel'], ['welcher','artikel'],
+            // nouns
+            ['Haus','nomen'], ['Baum','nomen'], ['Tisch','nomen'], ['Auto','nomen'], ['Buch','nomen'], ['Katze','nomen'], ['Lehrer','nomen'], ['Schule','nomen'], ['Fenster','nomen'], ['Stadt','nomen'], ['Freund','nomen'], ['Gedanke','nomen'], ['Erfahrung','nomen'], ['Bewegung','nomen'],
+            // pronouns
+            ['ich','pronomen'], ['du','pronomen'], ['er','pronomen'], ['sie','pronomen'], ['wir','pronomen'], ['mich','pronomen'], ['dich','pronomen'], ['uns','pronomen'], ['euch','pronomen'], ['jemand','pronomen'], ['niemand','pronomen'],
+            // verbs
+            ['laufen','verb'], ['schreiben','verb'], ['springen','verb'], ['essen','verb'], ['trinken','verb'], ['lernen','verb'], ['lesen','verb'], ['spielen','verb'], ['arbeiten','verb'], ['erforschen','verb'], ['analysieren','verb'], ['beschreiben','verb'],
+            // adjectives
+            ['klein','adjektiv'], ['schnell','adjektiv'], ['laut','adjektiv'], ['ruhig','adjektiv'], ['schön','adjektiv'], ['kleiner','adjektiv'], ['langsam','adjektiv'], ['interessant','adjektiv'], ['hell','adjektiv'], ['kompliziert','adjektiv'], ['auffällig','adjektiv'], ['verdächtig','adjektiv'],
+            // adverbs
+            ['heute','adverb'], ['gestern','adverb'], ['morgen','adverb'], ['manchmal','adverb'], ['bald','adverb'], ['sofort','adverb'], ['soeben','adverb'], ['gelegentlich','adverb'], ['zufällig','adverb'],
+            // conjunctions
+            ['und','konjunktion'], ['aber','konjunktion'], ['oder','konjunktion'], ['weil','konjunktion'], ['denn','konjunktion'], ['jedoch','konjunktion'], ['obwohl','konjunktion'], ['während','konjunktion'], ['sodass','konjunktion'],
+            // prepositions
+            ['auf','praeposition'], ['mit','praeposition'], ['in','praeposition'], ['unter','praeposition'], ['neben','praeposition'], ['zwischen','praeposition'], ['trotz','praeposition'], ['wegen','praeposition']
+        ];
+
+        // difficulty -> allowed word types
+        const DIFFICULTY_TYPES = {
+            easy: ['nomen','artikel','verb','adjektiv'],
+            medium: ['nomen','artikel','verb','adjektiv','pronomen','praeposition'],
+            hard: ['nomen','artikel','verb','adjektiv','pronomen','praeposition','adverb','konjunktion']
         };
 
         function normalizeType(t) {
@@ -85,9 +79,10 @@
         }
 
         function loadQuestions(difficulty) {
-            const pool = WORDPOOL[difficulty] || WORDPOOL.easy;
-            // shuffle and map to objects
-            const arr = pool.slice();
+            const allowed = DIFFICULTY_TYPES[difficulty] || DIFFICULTY_TYPES.easy;
+            // filter master pool by allowed types
+            let arr = WORDPOOL_ALL.filter(item => allowed.includes(normalizeType(item[1])) ).slice();
+            // shuffle
             for (let i = arr.length -1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
             state.questions = arr.map(item => ({ word: item[0], type: normalizeType(item[1]) }));
             state.index = 0; state.score = 0;
