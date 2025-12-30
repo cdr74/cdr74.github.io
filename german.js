@@ -11,14 +11,17 @@
         const WORDPOOL = {
             easy: [
                 ['Haus','nomen'], ['ich','pronomen'], ['laufen','verb'], ['klein','adjektiv'],
-                ['Baum','nomen'], ['du','pronomen'], ['schreiben','verb'], ['schnell','adjektiv']
+                ['Baum','nomen'], ['du','pronomen'], ['schreiben','verb'], ['schnell','adjektiv'],
+                ['heute','adverb'], ['und','konjunktion'], ['auf','praeposition']
             ],
             medium: [
                 ['Tisch','nomen'], ['sie','pronomen'], ['springen','verb'], ['laut','adjektiv'],
-                ['Auto','nomen'], ['wir','pronomen'], ['denken','verb'], ['ruhig','adjektiv']
+                ['Auto','nomen'], ['wir','pronomen'], ['denken','verb'], ['ruhig','adjektiv'],
+                ['gestern','adverb'], ['aber','konjunktion'], ['mit','praeposition']
             ],
             hard: [
-                ['Gedanke','nomen'], ['jemand','pronomen'], ['erforschen','verb'], ['kompliziert','adjektiv']
+                ['Gedanke','nomen'], ['jemand','pronomen'], ['erforschen','verb'], ['kompliziert','adjektiv'],
+                ['soeben','adverb'], ['obwohl','konjunktion'], ['während','praeposition']
             ]
         };
 
@@ -30,6 +33,9 @@
             if (t === 'pronomen' || t === 'pronoun') return 'pronomen';
             if (t === 'verb') return 'verb';
             if (t === 'adjektiv' || t === 'adjective') return 'adjektiv';
+            if (t === 'adverb' || t === 'adverbien' || t === 'umstandswort') return 'adverb';
+            if (t === 'konjunktion' || t === 'konjunktionen' || t === 'konj') return 'konjunktion';
+            if (t === 'praeposition' || t === 'präposition' || t === 'praepositionen') return 'praeposition';
             return t;
         }
 
@@ -49,6 +55,9 @@
                             <button class="btn option" data-type="pronomen">Pronomen</button>
                             <button class="btn option" data-type="verb">Verben</button>
                             <button class="btn option" data-type="adjektiv">Adjektive</button>
+                            <button class="btn option" data-type="adverb">Adverbien</button>
+                            <button class="btn option" data-type="konjunktion">Konjunktionen</button>
+                            <button class="btn option" data-type="praeposition">Präpositionen</button>
                         </div>
                         <div id="grammar-feedback" class="feedback hidden"></div>
                         <div style="margin-top:0.8rem;"><button id="grammar-next" class="btn secondary hidden">Nächste</button></div>
@@ -107,6 +116,9 @@
                 case 'pronomen': return 'Pronomen';
                 case 'verb': return 'Verb';
                 case 'adjektiv': return 'Adjektiv';
+                case 'adverb': return 'Adverb';
+                case 'konjunktion': return 'Konjunktion';
+                case 'praeposition': return 'Präposition';
                 default: return t;
             }
         }
