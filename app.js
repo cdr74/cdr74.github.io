@@ -27,6 +27,7 @@
                 deutschStartBtn: document.getElementById('deutsch-start'),
                 deutschScoreDisplay: document.getElementById('deutsch-score'),
                 deutschExitBtn: document.getElementById('deutsch-exit'),
+                settingsBackBtn: document.getElementById('settings-back'),
                 modeSelect: document.getElementById('mode'),
                 difficultySelect: document.getElementById('difficulty'),
                 startBtn: document.getElementById('start-btn'),
@@ -49,6 +50,7 @@
             if (d.btnGroessen) d.btnGroessen.addEventListener('click', () => this.showSection('settings'));
             if (d.btnDeutsch) d.btnDeutsch.addEventListener('click', () => this.showSection('deutsch'));
             if (d.deutschBackBtn) d.deutschBackBtn.addEventListener('click', () => this.showSection('start-menu'));
+            if (d.settingsBackBtn) d.settingsBackBtn.addEventListener('click', () => this.showSection('start-menu'));
             if (d.backBtn) d.backBtn.addEventListener('click', () => this.showSection('start-menu'));
             if (d.startBtn) d.startBtn.addEventListener('click', () => {
                 const mode = (d.modeSelect && d.modeSelect.value) || 'distance';
