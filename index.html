@@ -65,14 +65,39 @@
 
         <section id="deutsch" class="card hidden">
             <h2>Deutsch — Einstieg</h2>
-            <p>Hier werden bald Übungen und kleine Lektionen zum Thema Deutsch zu finden sein (z. B. Lesen, Rechtschreibung, Grammatik).</p>
-            <ul>
-                <li>Vokabeltraining</li>
-                <li>Kurze Leseaufgaben</li>
-                <li>Grammatik-Übungen</li>
-            </ul>
+            <p>Wähle aus, was du üben möchtest und starte die Übung.</p>
+            <div class="control-group">
+                <label for="deutsch-mode">Was möchtest du üben?</label>
+                <select id="deutsch-mode">
+                    <option value="grammar">Grammatik</option>
+                    <option value="reading">Lesen</option>
+                    <option value="writing">Schreiben</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="deutsch-difficulty">Schwierigkeit:</label>
+                <select id="deutsch-difficulty">
+                    <option value="easy">Einfach</option>
+                    <option value="medium">Mittel</option>
+                    <option value="hard">Schwer</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <button id="deutsch-start" class="btn primary">Los geht's!</button>
+            </div>
             <div class="control-group">
                 <button id="deutsch-back" class="btn small">Zurück</button>
+            </div>
+        </section>
+
+        <section id="deutsch-area" class="card hidden">
+            <div class="score-board">
+                <span>Punkte: <span id="deutsch-score">0</span></span>
+                <button id="deutsch-exit" class="btn small">Zurück</button>
+            </div>
+            <div id="deutsch-content">
+                <h3 id="deutsch-title">Deutsch — Übung</h3>
+                <p id="deutsch-placeholder">Hier erscheinen später die Aufgaben (z. B. Grammatik-, Lese- oder Schreibaufgaben).</p>
             </div>
         </section>
     </div>

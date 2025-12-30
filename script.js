@@ -9,6 +9,12 @@ const settingsSection = document.getElementById('settings');
 const gameAreaSection = document.getElementById('game-area');
 const startMenuSection = document.getElementById('start-menu');
 const deutschSection = document.getElementById('deutsch');
+const deutschAreaSection = document.getElementById('deutsch-area');
+const deutschModeSelect = document.getElementById('deutsch-mode');
+const deutschDifficultySelect = document.getElementById('deutsch-difficulty');
+const deutschStartBtn = document.getElementById('deutsch-start');
+const deutschScoreDisplay = document.getElementById('deutsch-score');
+const deutschExitBtn = document.getElementById('deutsch-exit');
 const modeSelect = document.getElementById('mode');
 const difficultySelect = document.getElementById('difficulty');
 const startBtn = document.getElementById('start-btn');
@@ -54,6 +60,8 @@ backBtn.addEventListener('click', showStartMenu);
 if (btnGroessen) btnGroessen.addEventListener('click', showGroessenSettings);
 if (btnDeutsch) btnDeutsch.addEventListener('click', showDeutsch);
 if (deutschBackBtn) deutschBackBtn.addEventListener('click', showStartMenu);
+if (deutschStartBtn) deutschStartBtn.addEventListener('click', startDeutsch);
+if (deutschExitBtn) deutschExitBtn.addEventListener('click', showStartMenu);
 checkBtn.addEventListener('click', checkAnswer);
 nextBtn.addEventListener('click', nextProblem);
 userInput.addEventListener('keypress', (e) => {
@@ -99,6 +107,23 @@ function showDeutsch() {
     settingsSection.classList.add('hidden');
     gameAreaSection.classList.add('hidden');
     if (deutschSection) deutschSection.classList.remove('hidden');
+}
+
+function startDeutsch() {
+    // Read selections (for future exercise generation)
+    const mode = deutschModeSelect ? deutschModeSelect.value : 'grammar';
+    const difficulty = deutschDifficultySelect ? deutschDifficultySelect.value : 'easy';
+
+    // Show exercise area
+    if (deutschSection) deutschSection.classList.add('hidden');
+    if (deutschAreaSection) deutschAreaSection.classList.remove('hidden');
+
+    // Reset score and placeholder
+    if (deutschScoreDisplay) deutschScoreDisplay.textContent = '0';
+    const title = document.getElementById('deutsch-title');
+    const placeholder = document.getElementById('deutsch-placeholder');
+    if (title) title.textContent = `Deutsch — ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+    if (placeholder) placeholder.textContent = `Übungstyp: ${mode}, Schwierigkeit: ${difficulty}. Aufgaben folgen...`;
 }
 
 function updateScore() {
