@@ -75,6 +75,15 @@
 
     window.App = App;
 
-    document.addEventListener('DOMContentLoaded', () => App.init());
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            App.init();
+            // notify modules waiting for app readiness
+            window.dispatchEvent(new Event('app:ready'));
+        });
+    } else {
+        App.init();
+        window.dispatchEvent(new Event('app:ready'));
+    }
 
 })();
