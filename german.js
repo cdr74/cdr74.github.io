@@ -10,18 +10,34 @@
 
         const WORDPOOL = {
             easy: [
-                ['Haus','nomen'], ['ich','pronomen'], ['laufen','verb'], ['klein','adjektiv'],
-                ['Baum','nomen'], ['du','pronomen'], ['schreiben','verb'], ['schnell','adjektiv'],
-                ['heute','adverb'], ['und','konjunktion'], ['auf','praeposition']
+                ['der','artikel'], ['die','artikel'], ['das','artikel'], ['ein','artikel'], ['eine','artikel'], ['einen','artikel'],
+                ['Haus','nomen'], ['Baum','nomen'], ['Tisch','nomen'], ['Auto','nomen'], ['Buch','nomen'], ['Katze','nomen'],
+                ['ich','pronomen'], ['du','pronomen'], ['er','pronomen'], ['sie','pronomen'], ['wir','pronomen'],
+                ['laufen','verb'], ['schreiben','verb'], ['springen','verb'], ['essen','verb'], ['trinken','verb'],
+                ['klein','adjektiv'], ['schnell','adjektiv'], ['laut','adjektiv'], ['ruhig','adjektiv'], ['schön','adjektiv'],
+                ['heute','adverb'], ['gestern','adverb'], ['morgen','adverb'],
+                ['und','konjunktion'], ['aber','konjunktion'], ['oder','konjunktion'],
+                ['auf','praeposition'], ['mit','praeposition'], ['in','praeposition']
             ],
             medium: [
-                ['Tisch','nomen'], ['sie','pronomen'], ['springen','verb'], ['laut','adjektiv'],
-                ['Auto','nomen'], ['wir','pronomen'], ['denken','verb'], ['ruhig','adjektiv'],
-                ['gestern','adverb'], ['aber','konjunktion'], ['mit','praeposition']
+                ['der','artikel'], ['die','artikel'], ['das','artikel'], ['dem','artikel'], ['den','artikel'], ['einem','artikel'],
+                ['Lehrer','nomen'], ['Schule','nomen'], ['Fenster','nomen'], ['Stadt','nomen'], ['Freund','nomen'],
+                ['mich','pronomen'], ['dich','pronomen'], ['uns','pronomen'], ['euch','pronomen'],
+                ['lernen','verb'], ['lesen','verb'], ['schreiben','verb'], ['spielen','verb'], ['arbeiten','verb'],
+                ['kleiner','adjektiv'], ['langsam','adjektiv'], ['interessant','adjektiv'], ['hell','adjektiv'],
+                ['manchmal','adverb'], ['bald','adverb'], ['sofort','adverb'],
+                ['weil','konjunktion'], ['denn','konjunktion'], ['jedoch','konjunktion'],
+                ['unter','praeposition'], ['neben','praeposition'], ['zwischen','praeposition']
             ],
             hard: [
-                ['Gedanke','nomen'], ['jemand','pronomen'], ['erforschen','verb'], ['kompliziert','adjektiv'],
-                ['soeben','adverb'], ['obwohl','konjunktion'], ['während','praeposition']
+                ['dessen','artikel'], ['welcher','artikel'],
+                ['Gedanke','nomen'], ['Erfahrung','nomen'], ['Bewegung','nomen'],
+                ['jemand','pronomen'], ['niemand','pronomen'],
+                ['erforschen','verb'], ['analysieren','verb'], ['beschreiben','verb'],
+                ['kompliziert','adjektiv'], ['auffällig','adjektiv'], ['verdächtig','adjektiv'],
+                ['soeben','adverb'], ['gelegentlich','adverb'], ['zufällig','adverb'],
+                ['obwohl','konjunktion'], ['während','konjunktion'], ['sodass','konjunktion'],
+                ['während','praeposition'], ['trotz','praeposition'], ['wegen','praeposition']
             ]
         };
 
@@ -36,6 +52,7 @@
             if (t === 'adverb' || t === 'adverbien' || t === 'umstandswort') return 'adverb';
             if (t === 'konjunktion' || t === 'konjunktionen' || t === 'konj') return 'konjunktion';
             if (t === 'praeposition' || t === 'präposition' || t === 'praepositionen') return 'praeposition';
+            if (t === 'artikel' || t === 'artikelwort' || t === 'det') return 'artikel';
             return t;
         }
 
@@ -58,6 +75,7 @@
                             <button class="btn option" data-type="adverb">Adverbien</button>
                             <button class="btn option" data-type="konjunktion">Konjunktionen</button>
                             <button class="btn option" data-type="praeposition">Präpositionen</button>
+                            <button class="btn option" data-type="artikel">Artikel</button>
                         </div>
                         <div id="grammar-feedback" class="feedback hidden"></div>
                         <div style="margin-top:0.8rem;"><button id="grammar-next" class="btn secondary hidden">Nächste</button></div>
@@ -119,6 +137,7 @@
                 case 'adverb': return 'Adverb';
                 case 'konjunktion': return 'Konjunktion';
                 case 'praeposition': return 'Präposition';
+                case 'artikel': return 'Artikel';
                 default: return t;
             }
         }
