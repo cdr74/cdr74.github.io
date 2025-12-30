@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Einheiten-Umrechner für Kids</title>
+    <!-- Prevent client-side caching where possible -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -101,6 +105,27 @@
             </div>
         </section>
     </div>
-    <script src="script.js"></script>
+    <!-- Cache-busting loader: appends a timestamp to CSS/JS to force fetch when updated -->
+    <script>
+        (function(){
+            try {
+                const v = Date.now();
+                // update CSS link
+                const css = document.querySelector('link[rel=stylesheet][href="style.css"]');
+                if (css) css.href = 'style.css?v=' + v;
+
+                // load modular scripts in order: app, math, german
+                const scripts = ['app.js','math.js','german.js'];
+                scripts.forEach((src) => {
+                    const s = document.createElement('script');
+                    s.src = src + '?v=' + v;
+                    s.defer = true;
+                    document.body.appendChild(s);
+                });
+            } catch (e) {
+                console.error('module loader error', e);
+            }
+        })();
+    </script>
 </body>
 </html>

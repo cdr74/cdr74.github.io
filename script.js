@@ -1,245 +1,237 @@
-// State
-let currentScore = 0;
-let currentMode = 'distance';
-let currentDifficulty = 'easy';
-let currentProblem = null;
+/* Modular app architecture --------------------------------------------------
+   - App.registerModule(name, module)
+   - App.navigation manages sections
+   - groessenModule contains unit-conversion exercises (previous logic)
+   - deutschModule is a simple scaffold for future exercises
+*/
 
-// DOM Elements
-const settingsSection = document.getElementById('settings');
-const gameAreaSection = document.getElementById('game-area');
-const startMenuSection = document.getElementById('start-menu');
-const deutschSection = document.getElementById('deutsch');
-const deutschAreaSection = document.getElementById('deutsch-area');
-const deutschModeSelect = document.getElementById('deutsch-mode');
-const deutschDifficultySelect = document.getElementById('deutsch-difficulty');
-const deutschStartBtn = document.getElementById('deutsch-start');
-const deutschScoreDisplay = document.getElementById('deutsch-score');
-const deutschExitBtn = document.getElementById('deutsch-exit');
-const modeSelect = document.getElementById('mode');
-const difficultySelect = document.getElementById('difficulty');
-const startBtn = document.getElementById('start-btn');
-const backBtn = document.getElementById('back-btn');
-const btnGroessen = document.getElementById('btn-groessen');
-const btnDeutsch = document.getElementById('btn-deutsch');
-const deutschBackBtn = document.getElementById('deutsch-back');
-const scoreDisplay = document.getElementById('score');
-const valueDisplay = document.getElementById('value-display');
-const unitFromDisplay = document.getElementById('unit-from');
-const unitToDisplay = document.getElementById('unit-to');
-const userInput = document.getElementById('user-input');
-const checkBtn = document.getElementById('check-btn');
-const nextBtn = document.getElementById('next-btn');
-const feedbackDisplay = document.getElementById('feedback');
-
-// Unit Definitions
-const UNITS = {
-    distance: [
-        { name: 'mm', factor: 0.001 },
-        { name: 'cm', factor: 0.01 },
-        { name: 'dm', factor: 0.1 },
-        { name: 'm', factor: 1 },
-        { name: 'km', factor: 1000 }
-    ],
-    area: [
-        { name: 'mm²', factor: 0.000001 },
-        { name: 'cm²', factor: 0.0001 },
-        { name: 'dm²', factor: 0.01 },
-        { name: 'm²', factor: 1 }
-    ],
-    volume: [
-        { name: 'mm³', factor: 0.000000001 },
-        { name: 'cm³', factor: 0.000001 },
-        { name: 'dm³', factor: 0.001 },
-        { name: 'm³', factor: 1 }
-    ]
-};
-
-// Event Listeners
-startBtn.addEventListener('click', startGame);
-backBtn.addEventListener('click', showStartMenu);
-if (btnGroessen) btnGroessen.addEventListener('click', showGroessenSettings);
-if (btnDeutsch) btnDeutsch.addEventListener('click', showDeutsch);
-if (deutschBackBtn) deutschBackBtn.addEventListener('click', showStartMenu);
-if (deutschStartBtn) deutschStartBtn.addEventListener('click', startDeutsch);
-if (deutschExitBtn) deutschExitBtn.addEventListener('click', showStartMenu);
-checkBtn.addEventListener('click', checkAnswer);
-nextBtn.addEventListener('click', nextProblem);
-userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') checkAnswer();
-});
-
-function startGame() {
-    currentMode = modeSelect.value;
-    currentDifficulty = difficultySelect.value;
-    currentScore = 0;
-    updateScore();
-
-    // Hide menus and show game area
-    if (startMenuSection) startMenuSection.classList.add('hidden');
-    settingsSection.classList.add('hidden');
-    gameAreaSection.classList.remove('hidden');
-
-    generateProblem();
-}
-
-function showSettings() {
-    gameAreaSection.classList.add('hidden');
-    settingsSection.classList.remove('hidden');
-}
-
-function showStartMenu() {
-    // Show the start menu and hide other sections
-    if (startMenuSection) startMenuSection.classList.remove('hidden');
-    if (settingsSection) settingsSection.classList.add('hidden');
-    if (gameAreaSection) gameAreaSection.classList.add('hidden');
-    if (deutschSection) deutschSection.classList.add('hidden');
-}
-
-function showGroessenSettings() {
-    if (startMenuSection) startMenuSection.classList.add('hidden');
-    if (deutschSection) deutschSection.classList.add('hidden');
-    settingsSection.classList.remove('hidden');
-    gameAreaSection.classList.add('hidden');
-}
-
-function showDeutsch() {
-    if (startMenuSection) startMenuSection.classList.add('hidden');
-    settingsSection.classList.add('hidden');
-    gameAreaSection.classList.add('hidden');
-    if (deutschSection) deutschSection.classList.remove('hidden');
-}
-
-function startDeutsch() {
-    // Read selections (for future exercise generation)
-    const mode = deutschModeSelect ? deutschModeSelect.value : 'grammar';
-    const difficulty = deutschDifficultySelect ? deutschDifficultySelect.value : 'easy';
-
-    // Show exercise area
-    if (deutschSection) deutschSection.classList.add('hidden');
-    if (deutschAreaSection) deutschAreaSection.classList.remove('hidden');
-
-    // Reset score and placeholder
-    if (deutschScoreDisplay) deutschScoreDisplay.textContent = '0';
-    const title = document.getElementById('deutsch-title');
-    const placeholder = document.getElementById('deutsch-placeholder');
-    if (title) title.textContent = `Deutsch — ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
-    if (placeholder) placeholder.textContent = `Übungstyp: ${mode}, Schwierigkeit: ${difficulty}. Aufgaben folgen...`;
-}
-
-function updateScore() {
-    scoreDisplay.textContent = currentScore;
-}
-
-function generateProblem() {
-    // Reset UI
-    userInput.value = '';
-    feedbackDisplay.classList.add('hidden');
-    feedbackDisplay.className = 'feedback hidden';
-    nextBtn.classList.add('hidden');
-    checkBtn.classList.remove('hidden');
-    userInput.disabled = false;
-    userInput.focus();
-
-    const units = UNITS[currentMode];
-    let unit1Index, unit2Index;
-
-    // Select units based on difficulty
-    if (currentDifficulty === 'easy') {
-        // Adjacent units
-        unit1Index = Math.floor(Math.random() * (units.length - 1));
-        unit2Index = unit1Index + 1;
-        // Randomly swap direction
-        if (Math.random() > 0.5) [unit1Index, unit2Index] = [unit2Index, unit1Index];
-    } else {
-        // Any units
-        unit1Index = Math.floor(Math.random() * units.length);
-        do {
-            unit2Index = Math.floor(Math.random() * units.length);
-        } while (unit1Index === unit2Index);
-    }
-
-    const unit1 = units[unit1Index];
-    const unit2 = units[unit2Index];
-
-    // Generate value
-    let value;
-    if (currentDifficulty === 'easy') {
-        // Ensure integer result for easy mode
-        // If converting smaller to larger (e.g. mm to cm), start with multiple of 10
-        // If converting larger to smaller (e.g. cm to mm), start with any small integer
-
-        const factorDiff = unit1.factor / unit2.factor;
-
-        if (factorDiff < 1) {
-            // unit1 is smaller than unit2 (e.g. mm -> cm). factorDiff is 0.1
-            // We need value * factorDiff to be integer. 
-            // So value must be multiple of 1/factorDiff.
-            const multiplier = Math.round(1 / factorDiff);
-            value = Math.floor(Math.random() * 10 + 1) * multiplier;
-        } else {
-            // unit1 is larger than unit2 (e.g. cm -> mm). factorDiff is 10.
-            // Any integer value works.
-            value = Math.floor(Math.random() * 20 + 1);
+(function(){
+    const App = {
+        modules: {},
+        dom: {},
+        registerModule(name, module) { this.modules[name] = module; if (module.init) module.init(this.dom); },
+        showSection(id) {
+            const sections = ['start-menu','settings','game-area','deutsch','deutsch-area'];
+            sections.forEach(s => {
+                const el = document.getElementById(s);
+                if (!el) return;
+                if (s === id) el.classList.remove('hidden'); else el.classList.add('hidden');
+            });
+        },
+        initDOM() {
+            // centralize DOM references
+            this.dom = {
+                settingsSection: document.getElementById('settings'),
+                gameAreaSection: document.getElementById('game-area'),
+                startMenuSection: document.getElementById('start-menu'),
+                deutschSection: document.getElementById('deutsch'),
+                deutschAreaSection: document.getElementById('deutsch-area'),
+                deutschModeSelect: document.getElementById('deutsch-mode'),
+                deutschDifficultySelect: document.getElementById('deutsch-difficulty'),
+                deutschStartBtn: document.getElementById('deutsch-start'),
+                deutschScoreDisplay: document.getElementById('deutsch-score'),
+                deutschExitBtn: document.getElementById('deutsch-exit'),
+                modeSelect: document.getElementById('mode'),
+                difficultySelect: document.getElementById('difficulty'),
+                startBtn: document.getElementById('start-btn'),
+                backBtn: document.getElementById('back-btn'),
+                btnGroessen: document.getElementById('btn-groessen'),
+                btnDeutsch: document.getElementById('btn-deutsch'),
+                deutschBackBtn: document.getElementById('deutsch-back'),
+                scoreDisplay: document.getElementById('score'),
+                valueDisplay: document.getElementById('value-display'),
+                unitFromDisplay: document.getElementById('unit-from'),
+                unitToDisplay: document.getElementById('unit-to'),
+                userInput: document.getElementById('user-input'),
+                checkBtn: document.getElementById('check-btn'),
+                nextBtn: document.getElementById('next-btn'),
+                feedbackDisplay: document.getElementById('feedback')
+            };
+        },
+        attachNavHandlers() {
+            const d = this.dom;
+            if (d.btnGroessen) d.btnGroessen.addEventListener('click', () => this.showSection('settings'));
+            if (d.btnDeutsch) d.btnDeutsch.addEventListener('click', () => this.showSection('deutsch'));
+            if (d.deutschBackBtn) d.deutschBackBtn.addEventListener('click', () => this.showSection('start-menu'));
+            if (d.backBtn) d.backBtn.addEventListener('click', () => this.showSection('start-menu'));
+            if (d.startBtn) d.startBtn.addEventListener('click', () => {
+                // start groessen module with selected settings
+                const mode = (d.modeSelect && d.modeSelect.value) || 'distance';
+                const difficulty = (d.difficultySelect && d.difficultySelect.value) || 'easy';
+                if (this.modules.groessen && this.modules.groessen.startGame) this.modules.groessen.startGame(mode, difficulty);
+            });
+            if (this.dom.deutschStartBtn) this.dom.deutschStartBtn.addEventListener('click', () => {
+                const mode = (this.dom.deutschModeSelect && this.dom.deutschModeSelect.value) || 'grammar';
+                const difficulty = (this.dom.deutschDifficultySelect && this.dom.deutschDifficultySelect.value) || 'easy';
+                if (this.modules.deutsch && this.modules.deutsch.start) this.modules.deutsch.start(mode, difficulty);
+            });
+            if (this.dom.deutschExitBtn) this.dom.deutschExitBtn.addEventListener('click', () => this.showSection('start-menu'));
+        },
+        init() {
+            this.initDOM();
+            // register modules
+            this.registerModule('groessen', groessenModule);
+            this.registerModule('deutsch', deutschModule);
+            this.attachNavHandlers();
+            // show start
+            this.showSection('start-menu');
         }
-    } else if (currentDifficulty === 'medium') {
-        // Simple decimals allowed (e.g. 0.5, 1.5)
-        value = (Math.random() * 100).toFixed(1);
-        // Remove trailing .0
-        value = parseFloat(value);
-    } else {
-        // Harder decimals
-        value = (Math.random() * 1000).toFixed(3);
-        value = parseFloat(value);
-    }
-
-    currentProblem = {
-        value: value,
-        unitFrom: unit1,
-        unitTo: unit2,
-        correctAnswer: (value * unit1.factor / unit2.factor)
     };
 
-    // Display
-    valueDisplay.textContent = currentProblem.value;
-    unitFromDisplay.textContent = currentProblem.unitFrom.name;
-    unitToDisplay.textContent = currentProblem.unitTo.name;
-}
+    /* groessenModule: unit-conversion exercises (refactored) */
+    const groessenModule = (function(){
+        const UNITS = {
+            distance: [
+                { name: 'mm', factor: 0.001 },
+                { name: 'cm', factor: 0.01 },
+                { name: 'dm', factor: 0.1 },
+                { name: 'm', factor: 1 },
+                { name: 'km', factor: 1000 }
+            ],
+            area: [
+                { name: 'mm²', factor: 0.000001 },
+                { name: 'cm²', factor: 0.0001 },
+                { name: 'dm²', factor: 0.01 },
+                { name: 'm²', factor: 1 }
+            ],
+            volume: [
+                { name: 'mm³', factor: 0.000000001 },
+                { name: 'cm³', factor: 0.000001 },
+                { name: 'dm³', factor: 0.001 },
+                { name: 'm³', factor: 1 }
+            ]
+        };
 
-function checkAnswer() {
-    const userVal = parseFloat(userInput.value.replace(',', '.')); // Allow comma as decimal separator
+        let state = {
+            currentScore: 0,
+            currentMode: 'distance',
+            currentDifficulty: 'easy',
+            currentProblem: null,
+            dom: null
+        };
 
-    if (isNaN(userVal)) return;
+        function formatNumber(num) {
+            return parseFloat(num.toPrecision(10)).toString().replace('.', ',');
+        }
 
-    // Calculate tolerance for floating point comparison
-    const epsilon = 0.0001;
-    const isCorrect = Math.abs(userVal - currentProblem.correctAnswer) < epsilon;
+        function updateScore() {
+            if (state.dom && state.dom.scoreDisplay) state.dom.scoreDisplay.textContent = state.currentScore;
+        }
 
-    feedbackDisplay.classList.remove('hidden');
+        function generateProblem() {
+            const d = state.dom;
+            // Reset UI
+            if (d.userInput) d.userInput.value = '';
+            if (d.feedbackDisplay) { d.feedbackDisplay.classList.add('hidden'); d.feedbackDisplay.className = 'feedback hidden'; }
+            if (d.nextBtn) d.nextBtn.classList.add('hidden');
+            if (d.checkBtn) d.checkBtn.classList.remove('hidden');
+            if (d.userInput) { d.userInput.disabled = false; d.userInput.focus(); }
 
-    if (isCorrect) {
-        feedbackDisplay.textContent = "Richtig! Super gemacht! 🎉";
-        feedbackDisplay.classList.add('correct');
-        currentScore += 10;
-        updateScore();
-        checkBtn.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-        userInput.disabled = true;
-        nextBtn.focus();
-    } else {
-        feedbackDisplay.textContent = `Leider falsch. Die richtige Antwort ist ${formatNumber(currentProblem.correctAnswer)}.`;
-        feedbackDisplay.classList.add('incorrect');
-        checkBtn.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-        userInput.disabled = true;
-        nextBtn.focus();
-    }
-}
+            const units = UNITS[state.currentMode];
+            let unit1Index, unit2Index;
 
-function nextProblem() {
-    generateProblem();
-}
+            if (state.currentDifficulty === 'easy') {
+                unit1Index = Math.floor(Math.random() * (units.length - 1));
+                unit2Index = unit1Index + 1;
+                if (Math.random() > 0.5) [unit1Index, unit2Index] = [unit2Index, unit1Index];
+            } else {
+                unit1Index = Math.floor(Math.random() * units.length);
+                do { unit2Index = Math.floor(Math.random() * units.length); } while (unit1Index === unit2Index);
+            }
 
-function formatNumber(num) {
-    // Helper to format number nicely (remove unnecessary trailing zeros, handle float precision issues)
-    return parseFloat(num.toPrecision(10)).toString().replace('.', ',');
-}
+            const unit1 = units[unit1Index];
+            const unit2 = units[unit2Index];
+
+            let value;
+            if (state.currentDifficulty === 'easy') {
+                const factorDiff = unit1.factor / unit2.factor;
+                if (factorDiff < 1) {
+                    const multiplier = Math.round(1 / factorDiff);
+                    value = Math.floor(Math.random() * 10 + 1) * multiplier;
+                } else {
+                    value = Math.floor(Math.random() * 20 + 1);
+                }
+            } else if (state.currentDifficulty === 'medium') {
+                value = parseFloat((Math.random() * 100).toFixed(1));
+            } else {
+                value = parseFloat((Math.random() * 1000).toFixed(3));
+            }
+
+            state.currentProblem = {
+                value: value,
+                unitFrom: unit1,
+                unitTo: unit2,
+                correctAnswer: (value * unit1.factor / unit2.factor)
+            };
+
+            if (d.valueDisplay) d.valueDisplay.textContent = state.currentProblem.value;
+            if (d.unitFromDisplay) d.unitFromDisplay.textContent = state.currentProblem.unitFrom.name;
+            if (d.unitToDisplay) d.unitToDisplay.textContent = state.currentProblem.unitTo.name;
+        }
+
+        function checkAnswer() {
+            const d = state.dom;
+            const userVal = d.userInput ? parseFloat(d.userInput.value.replace(',', '.')) : NaN;
+            if (isNaN(userVal)) return;
+            const epsilon = 0.0001;
+            const isCorrect = Math.abs(userVal - state.currentProblem.correctAnswer) < epsilon;
+            if (d.feedbackDisplay) d.feedbackDisplay.classList.remove('hidden');
+            if (isCorrect) {
+                if (d.feedbackDisplay) { d.feedbackDisplay.textContent = "Richtig! Super gemacht! 🎉"; d.feedbackDisplay.classList.add('correct'); }
+                state.currentScore += 10; updateScore();
+                if (d.checkBtn) d.checkBtn.classList.add('hidden');
+                if (d.nextBtn) d.nextBtn.classList.remove('hidden');
+                if (d.userInput) d.userInput.disabled = true;
+                if (d.nextBtn) d.nextBtn.focus();
+            } else {
+                if (d.feedbackDisplay) { d.feedbackDisplay.textContent = `Leider falsch. Die richtige Antwort ist ${formatNumber(state.currentProblem.correctAnswer)}.`; d.feedbackDisplay.classList.add('incorrect'); }
+                if (d.checkBtn) d.checkBtn.classList.add('hidden');
+                if (d.nextBtn) d.nextBtn.classList.remove('hidden');
+                if (d.userInput) d.userInput.disabled = true;
+                if (d.nextBtn) d.nextBtn.focus();
+            }
+        }
+
+        return {
+            init(dom) {
+                state.dom = dom;
+                // wire UI actions specific to this module
+                if (dom.checkBtn) dom.checkBtn.addEventListener('click', checkAnswer);
+                if (dom.nextBtn) dom.nextBtn.addEventListener('click', generateProblem);
+                if (dom.userInput) dom.userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
+            },
+            startGame(mode, difficulty) {
+                state.currentMode = mode || 'distance';
+                state.currentDifficulty = difficulty || 'easy';
+                state.currentScore = 0; updateScore();
+                // show game area
+                App.showSection('game-area');
+                generateProblem();
+            }
+        };
+    })();
+
+    /* deutschModule: scaffold for future exercises */
+    const deutschModule = (function(){
+        let dom = null;
+        return {
+            init(_dom) { dom = _dom; },
+            start(mode, difficulty) {
+                // show deutsch-area and set placeholder text
+                App.showSection('deutsch-area');
+                if (dom && dom.deutschScoreDisplay) dom.deutschScoreDisplay.textContent = '0';
+                const title = document.getElementById('deutsch-title');
+                const placeholder = document.getElementById('deutsch-placeholder');
+                if (title) title.textContent = `Deutsch — ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+                if (placeholder) placeholder.textContent = `Übungstyp: ${mode}, Schwierigkeit: ${difficulty}. Aufgaben folgen...`;
+            }
+        };
+    })();
+
+    // Initialize app when DOM ready
+    document.addEventListener('DOMContentLoaded', () => App.init());
+
+    // Expose App for debugging (optional)
+    window.App = App;
+
+})();
