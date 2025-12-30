@@ -7,10 +7,15 @@ let currentProblem = null;
 // DOM Elements
 const settingsSection = document.getElementById('settings');
 const gameAreaSection = document.getElementById('game-area');
+const startMenuSection = document.getElementById('start-menu');
+const deutschSection = document.getElementById('deutsch');
 const modeSelect = document.getElementById('mode');
 const difficultySelect = document.getElementById('difficulty');
 const startBtn = document.getElementById('start-btn');
 const backBtn = document.getElementById('back-btn');
+const btnGroessen = document.getElementById('btn-groessen');
+const btnDeutsch = document.getElementById('btn-deutsch');
+const deutschBackBtn = document.getElementById('deutsch-back');
 const scoreDisplay = document.getElementById('score');
 const valueDisplay = document.getElementById('value-display');
 const unitFromDisplay = document.getElementById('unit-from');
@@ -45,7 +50,10 @@ const UNITS = {
 
 // Event Listeners
 startBtn.addEventListener('click', startGame);
-backBtn.addEventListener('click', showSettings);
+backBtn.addEventListener('click', showStartMenu);
+if (btnGroessen) btnGroessen.addEventListener('click', showGroessenSettings);
+if (btnDeutsch) btnDeutsch.addEventListener('click', showDeutsch);
+if (deutschBackBtn) deutschBackBtn.addEventListener('click', showStartMenu);
 checkBtn.addEventListener('click', checkAnswer);
 nextBtn.addEventListener('click', nextProblem);
 userInput.addEventListener('keypress', (e) => {
@@ -58,6 +66,8 @@ function startGame() {
     currentScore = 0;
     updateScore();
 
+    // Hide menus and show game area
+    if (startMenuSection) startMenuSection.classList.add('hidden');
     settingsSection.classList.add('hidden');
     gameAreaSection.classList.remove('hidden');
 
@@ -67,6 +77,28 @@ function startGame() {
 function showSettings() {
     gameAreaSection.classList.add('hidden');
     settingsSection.classList.remove('hidden');
+}
+
+function showStartMenu() {
+    // Show the start menu and hide other sections
+    if (startMenuSection) startMenuSection.classList.remove('hidden');
+    if (settingsSection) settingsSection.classList.add('hidden');
+    if (gameAreaSection) gameAreaSection.classList.add('hidden');
+    if (deutschSection) deutschSection.classList.add('hidden');
+}
+
+function showGroessenSettings() {
+    if (startMenuSection) startMenuSection.classList.add('hidden');
+    if (deutschSection) deutschSection.classList.add('hidden');
+    settingsSection.classList.remove('hidden');
+    gameAreaSection.classList.add('hidden');
+}
+
+function showDeutsch() {
+    if (startMenuSection) startMenuSection.classList.add('hidden');
+    settingsSection.classList.add('hidden');
+    gameAreaSection.classList.add('hidden');
+    if (deutschSection) deutschSection.classList.remove('hidden');
 }
 
 function updateScore() {

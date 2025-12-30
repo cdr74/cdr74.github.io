@@ -13,7 +13,15 @@
             <h1>📏 Einheiten-Profi 📐</h1>
         </header>
         
-        <section id="settings" class="card">
+        <section id="start-menu" class="card">
+            <h2>Was möchtest du lernen?</h2>
+            <div class="topics-grid">
+                <button id="btn-groessen" class="btn topic-card">Grössen</button>
+                <button id="btn-deutsch" class="btn topic-card">Deutsch</button>
+            </div>
+        </section>
+
+        <section id="settings" class="card hidden">
             <h2>Einstellungen</h2>
             <div class="control-group">
                 <label for="mode">Was möchtest du üben?</label>
@@ -53,6 +61,19 @@
 
             <div id="feedback" class="feedback hidden"></div>
             <button id="next-btn" class="btn secondary hidden">Nächste Aufgabe</button>
+        </section>
+
+        <section id="deutsch" class="card hidden">
+            <h2>Deutsch — Einstieg</h2>
+            <p>Hier werden bald Übungen und kleine Lektionen zum Thema Deutsch zu finden sein (z. B. Lesen, Rechtschreibung, Grammatik).</p>
+            <ul>
+                <li>Vokabeltraining</li>
+                <li>Kurze Leseaufgaben</li>
+                <li>Grammatik-Übungen</li>
+            </ul>
+            <div class="control-group">
+                <button id="deutsch-back" class="btn small">Zurück</button>
+            </div>
         </section>
     </div>
     <script src="script.js"></script>
