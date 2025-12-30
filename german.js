@@ -5,7 +5,8 @@
         let state = {
             score: 0,
             index: 0,
-            questions: []
+            questions: [],
+            difficulty: 'easy'
         };
 
         // central combined word pool (same pool used for all difficulty levels)
@@ -79,7 +80,8 @@
         }
 
         function loadQuestions(difficulty) {
-            const allowed = DIFFICULTY_TYPES[difficulty] || DIFFICULTY_TYPES.easy;
+            state.difficulty = difficulty || 'easy';
+            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
             // filter master pool by allowed types
             let arr = WORDPOOL_ALL.filter(item => allowed.includes(normalizeType(item[1])) ).slice();
             // shuffle
@@ -94,6 +96,20 @@
         }
 
         function showQuestion() {
+            // skip any questions that do not match current difficulty allowed types
+            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
+            while (state.index < state.questions.length && !allowed.includes(state.questions[state.index].type)) {
+                state.index++;
+            }
+            if (state.index >= state.questions.length) {
+                // finished
+                const container = document.getElementById('deutsch-content');
+                if (container) container.innerHTML = `<h3>Fertig!</h3><p>Dein Ergebnis: ${state.score} Punkte</p><p><button id="deutsch-finish-back" class="btn small">Zurück</button></p>`;
+                const back = document.getElementById('deutsch-finish-back');
+                if (back) back.addEventListener('click', () => { if (window.App) window.App.showSection('start-menu'); });
+                return;
+            }
+
             const q = state.questions[state.index];
             const wordEl = document.getElementById('grammar-word');
             const feedback = document.getElementById('grammar-feedback');
