@@ -96,8 +96,9 @@
         }
 
         function showQuestion() {
-            // skip any questions that do not match current difficulty allowed types
+            // allowed types for current difficulty
             const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
+            // skip any questions that do not match current difficulty allowed types
             while (state.index < state.questions.length && !allowed.includes(state.questions[state.index].type)) {
                 state.index++;
             }
@@ -118,7 +119,6 @@
             if (feedback) { feedback.className = 'feedback hidden'; feedback.textContent = ''; }
             if (nextBtn) nextBtn.classList.add('hidden');
             // enable options and hide those not allowed for current difficulty
-            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
             document.querySelectorAll('#grammar-options .option').forEach(b => {
                 const t = b.getAttribute('data-type');
                 if (!allowed.includes(t)) {
