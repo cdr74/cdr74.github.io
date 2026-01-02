@@ -196,25 +196,66 @@
         return {
             init(_dom) { dom = _dom; },
             start(mode, difficulty) {
-                // only implement grammar exercise for now
+                // show deutsch area
                 if (window.App) window.App.showSection('deutsch-area');
                 if (dom && dom.deutschScoreDisplay) dom.deutschScoreDisplay.textContent = '0';
-                renderSkeleton();
-                if (mode !== 'grammar') {
-                    const placeholder = document.getElementById('deutsch-placeholder');
-                    if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`; 
+
+                const diff = (difficulty === 'medium' || difficulty === 'hard') ? difficulty : 'easy';
+
+                if (!mode || mode === 'grammar') {
+                    // default grammar exercise
+                    renderSkeleton();
+                    // load questions (async). showQuestion will be invoked when load completes.
+                    loadQuestions(diff);
+                    // wire option buttons and next
+                    document.querySelectorAll('#grammar-options .option').forEach(b => b.addEventListener('click', handleOptionClick));
+                    const nextBtn = document.getElementById('grammar-next');
+                    if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
                     return;
                 }
-                    // load questions (async). showQuestion will be invoked when load completes.
-                    const diff = (difficulty === 'medium' || difficulty === 'hard') ? difficulty : 'easy';
-                    loadQuestions(diff);
-                // wire option buttons and next
-                document.querySelectorAll('#grammar-options .option').forEach(b => b.addEventListener('click', handleOptionClick));
-                const nextBtn = document.getElementById('grammar-next');
-                if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
-                // Do not call showQuestion() here — questions are loaded asynchronously in loadQuestions()
-                // and showQuestion() is invoked after fetch completes. Calling it synchronously caused the
-                // exercise to immediately show the "Fertig" state when state.questions was still empty.
+
+                // Reading exercise integration: mode 'reading' or 'lesen'
+                if (mode === 'reading' || mode === 'lesen') {
+                    // render a simple reading skeleton inside #deutsch-content
+                    const container = document.getElementById('deutsch-content');
+                    if (container) {
+                        container.innerHTML = `
+                            <div id="reading-area">
+                                <div id="reading-content"></div>
+                                <div id="reading-feedback" class="feedback hidden" aria-live="polite"></div>
+                                <div style="margin-top:0.8rem;"><button id="reading-next" class="btn secondary hidden">Nächste</button></div>
+                            </div>`;
+                    }
+
+                    // wire DOM into the deutsch-lesen module
+                    const readingDom = Object.assign({}, dom);
+                    readingDom.readingContent = document.getElementById('reading-content');
+                    readingDom.nextBtn = document.getElementById('reading-next');
+                    readingDom.feedbackDisplay = document.getElementById('reading-feedback');
+                    // reuse deutsch score display for the reading module
+                    readingDom.scoreDisplay = dom && dom.deutschScoreDisplay ? dom.deutschScoreDisplay : null;
+
+                    // Use any registered module `deutsch-lesen` or the global shim
+                    const ml = (window.App && window.App.modules && window.App.modules['deutsch-lesen']) || (window.DeutschLesen && window.DeutschLesen.createModule && window.DeutschLesen.createModule());
+                    if (ml) {
+                        try {
+                            if (ml.init) ml.init(readingDom);
+                            if (ml.start) ml.start('reading', diff);
+                        } catch (err) {
+                            console.error('Error starting deutsch-lesen module', err);
+                            const placeholder = document.getElementById('deutsch-placeholder');
+                            if (placeholder) placeholder.textContent = `Fehler beim Starten der Leseübung: ${err.message}`;
+                        }
+                    } else {
+                        const placeholder = document.getElementById('deutsch-placeholder');
+                        if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`;
+                    }
+                    return;
+                }
+
+                // unsupported mode
+                const placeholder = document.getElementById('deutsch-placeholder');
+                if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`;
             }
         };
     })();

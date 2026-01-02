@@ -10,3 +10,5 @@ Kurzes Developer-Readme
 Vorschläge zum Weitermachen:
 - Module schrittweise in `src/js/modules/` migrieren und `german.js` refactoren, damit es `german-core` verwendet.
 - CI: `.github/workflows/ci.yml` hinzufügen, um `npm test` auszuführen.
+
+

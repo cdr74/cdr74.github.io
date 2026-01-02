@@ -1,0 +1,349 @@
+[
+  {
+    "id": "lesen-easy-1",
+    "title": "Der verlorene Ball",
+    "difficulty": "easy",
+    "text": "Paul spielt im Garten mit seinem roten Ball. Plötzlich rollt der Ball unter einen Busch. Paul ruft nach seiner Mutter, die ihm hilft, den Ball zu suchen.",
+    "questions": [
+      {
+        "id": "q1",
+        "q": "Wo spielt Paul?",
+        "choices": ["In der Schule", "Im Garten", "Im Supermarkt", "Im Park"],
+        "answer": 1
+      },
+      {
+        "id": "q2",
+        "q": "Welche Farbe hat der Ball?",
+        "choices": ["Blau", "Gelb", "Rot", "Grün"],
+        "answer": 2
+      },
+      {
+        "id": "q3",
+        "q": "Wer hilft Paul, den Ball zu suchen?",
+        "choices": ["Sein Vater", "Seine Schwester", "Seine Mutter", "Sein Freund"],
+        "answer": 2
+      }
+    ]
+  },
+  {
+    "id": "lesen-easy-2",
+    "title": "Das Frühstück",
+    "difficulty": "easy",
+    "text": "Anna isst am Morgen ein Brötchen mit Marmelade. Dazu trinkt sie ein Glas Milch. Danach zieht sie ihre Schuhe an und geht zur Schule.",
+    "questions": [
+      { "id": "q1", "q": "Was isst Anna zum Frühstück?", "choices": ["Einen Apfel", "Ein Brötchen mit Marmelade", "Joghurt", "Kuchen"], "answer": 1 },
+      { "id": "q2", "q": "Was trinkt Anna dazu?", "choices": ["Saft", "Wasser", "Milch", "Tee"], "answer": 2 },
+      { "id": "q3", "q": "Wohin geht Anna danach?", "choices": ["Zur Schule", "Ins Bett", "Zum Park", "Zum Bäcker"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-easy-3",
+    "title": "Der Regenbogen",
+    "difficulty": "easy",
+    "text": "Nach dem Regen sieht Lisa einen schönen Regenbogen am Himmel. Sie zählt die Farben und zeigt auf die größte Bögen.",
+    "questions": [
+      { "id": "q1", "q": "Wann sieht Lisa den Regenbogen?", "choices": ["Vor dem Regen", "Nach dem Regen", "Während der Nacht", "Bei Schnee"], "answer": 1 },
+      { "id": "q2", "q": "Was macht Lisa?", "choices": ["Sie macht Hausaufgaben", "Sie zählt die Farben", "Sie schläft", "Sie isst"], "answer": 1 },
+      { "id": "q3", "q": "Wo ist der Regenbogen?", "choices": ["Auf der Straße", "Am Himmel", "Im Haus", "Im Garten"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-easy-4",
+    "title": "Die Katze",
+    "difficulty": "easy",
+    "text": "Eine kleine Katze schläft auf dem Sofa. Sie träumt und schnurrt leise. Ihre Lieblingsfarbe ist grau, und sie mag Milch besonders gern.",
+    "questions": [
+      { "id": "q1", "q": "Wo schläft die Katze?", "choices": ["Auf dem Sofa", "Unter dem Bett", "Im Korb", "Auf dem Tisch"], "answer": 0 },
+      { "id": "q2", "q": "Was macht die Katze im Traum?", "choices": ["Sie bellt", "Sie schnurrt", "Sie fliegt", "Sie schwimmt"], "answer": 1 },
+      { "id": "q3", "q": "Welche Farbe mag die Katze?", "choices": ["Rot", "Grau", "Blau", "Gelb"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-easy-5",
+    "title": "Der Spaziergang",
+    "difficulty": "easy",
+    "text": "Tim und seine Mutter gehen spazieren. Sie sehen viele Blumen und einen kleinen Teich mit Enten. Tim freut sich über die Tiere.",
+    "questions": [
+      { "id": "q1", "q": "Mit wem geht Tim spazieren?", "choices": ["Mit seinem Freund", "Mit seinem Vater", "Mit seiner Mutter", "Alleine"], "answer": 2 },
+      { "id": "q2", "q": "Was sehen sie am Weg?", "choices": ["Autos", "Blumen und einen Teich", "Gebäude", "Einen Markt"], "answer": 1 },
+      { "id": "q3", "q": "Worüber freut sich Tim?", "choices": ["Über die Tiere", "Über das Wetter", "Über das Essen", "Über das Geschenk"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-easy-6",
+    "title": "Der Geburtstag",
+    "difficulty": "easy",
+    "text": "Heute hat Maria Geburtstag. Sie bekommt einen Kuchen mit Kerzen. Ihre Freunde singen und sie bläst die Kerzen aus.",
+    "questions": [
+      { "id": "q1", "q": "Was hat Maria heute?", "choices": ["Ferien", "Geburtstag", "Krankenhaus", "Schule"], "answer": 1 },
+      { "id": "q2", "q": "Was steht auf dem Tisch?", "choices": ["Ein Geschenk", "Ein Kuchen mit Kerzen", "Ein Buch", "Ein Ball"], "answer": 1 },
+      { "id": "q3", "q": "Was tun die Freunde?", "choices": ["Sie singen", "Sie weinen", "Sie laufen", "Sie schlafen"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-easy-7",
+    "title": "Die Bäckerei",
+    "difficulty": "easy",
+    "text": "In der Bäckerei riecht es nach frischem Brot. Der Bäcker backt Brötchen und croissants. Viele Menschen kaufen dort ihr Frühstück.",
+    "questions": [
+      { "id": "q1", "q": "Was riecht man in der Bäckerei?", "choices": ["Nach Blumen", "Nach Brot", "Nach Benzin", "Nach Farbe"], "answer": 1 },
+      { "id": "q2", "q": "Was backt der Bäcker?", "choices": ["Fahrräder", "Brötchen und Croissants", "Kuchen", "Fleisch"], "answer": 1 },
+      { "id": "q3", "q": "Wofür kommen viele Menschen?", "choices": ["Zum Sport", "Zum Frühstück kaufen", "Zum Schwimmen", "Zum Kino"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-easy-8",
+    "title": "Der Baum im Park",
+    "difficulty": "easy",
+    "text": "Im Park steht ein großer Baum. Im Sommer spenden seine Äste Schatten. Kinder klettern gern auf den Baum und spielen dort.",
+    "questions": [
+      { "id": "q1", "q": "Wo steht der Baum?", "choices": ["Im Garten", "Im Park", "Auf dem Balkon", "Im Wald"], "answer": 1 },
+      { "id": "q2", "q": "Was spenden seine Äste im Sommer?", "choices": ["Wasser", "Schatten", "Licht", "Äpfel"], "answer": 1 },
+      { "id": "q3", "q": "Was machen Kinder gern?", "choices": ["Tanzen", "Klettern", "Einkaufen", "Lesen"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-easy-9",
+    "title": "Die Ampel",
+    "difficulty": "easy",
+    "text": "An der Kreuzung steht eine Ampel. Sie zeigt rot, gelb und grün. Fußgänger warten bei rot und gehen bei grün über die Straße.",
+    "questions": [
+      { "id": "q1", "q": "Wie viele Farben hat die Ampel im Text?", "choices": ["Zwei", "Drei", "Vier", "Eine"], "answer": 1 },
+      { "id": "q2", "q": "Was tun Fußgänger bei Rot?", "choices": ["Sie laufen", "Sie warten", "Sie schlafen", "Sie laufen schneller"], "answer": 1 },
+      { "id": "q3", "q": "Wann gehen Fußgänger über die Straße?", "choices": ["Bei rot", "Bei gelb", "Bei grün", "Bei Nacht"], "answer": 2 }
+    ]
+  },
+  {
+    "id": "lesen-easy-10",
+    "title": "Der Schmetterling",
+    "difficulty": "easy",
+    "text": "Ein bunter Schmetterling fliegt von Blume zu Blume. Er sammelt Nektar und ruht sich manchmal auf einem Blatt aus.",
+    "questions": [
+      { "id": "q1", "q": "Was macht der Schmetterling?", "choices": ["Er fliegt von Blume zu Blume", "Er schwimmt im Teich", "Er läuft auf dem Boden", "Er schläft im Haus"], "answer": 0 },
+      { "id": "q2", "q": "Was sammelt er?", "choices": ["Honig", "Nektar", "Wasser", "Samen"], "answer": 1 },
+      { "id": "q3", "q": "Wo ruht er sich manchmal aus?", "choices": ["Auf einem Blatt", "Im Auto", "Unter dem Tisch", "Im Schuh"], "answer": 0 }
+    ]
+  },
+
+  {
+    "id": "lesen-medium-1",
+    "title": "Der Schulausflug",
+    "difficulty": "medium",
+    "text": "Die Klasse macht einen Ausflug in den Naturpark. Die Lehrerin erklärt verschiedene Pflanzenarten. Die Kinder schreiben Beobachtungen in ihre Hefte.",
+    "questions": [
+      { "id": "q1", "q": "Wohin geht die Klasse?", "choices": ["In den Zoo", "In den Naturpark", "Ins Museum", "Ins Theater"], "answer": 1 },
+      { "id": "q2", "q": "Was macht die Lehrerin?", "choices": ["Sie spielt", "Sie erklärt Pflanzenarten", "Sie kocht", "Sie malt"], "answer": 1 },
+      { "id": "q3", "q": "Was machen die Kinder?", "choices": ["Sie schwimmen", "Sie schreiben Beobachtungen", "Sie singen", "Sie schlafen"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-2",
+    "title": "Das alte Haus",
+    "difficulty": "medium",
+    "text": "Ein altes Haus steht am Ende der Straße. Es hat knarrende Dielen und große Fenster. Manchmal hört man den Wind durch die Ritzen pfeifen.",
+    "questions": [
+      { "id": "q1", "q": "Wie ist das Haus beschrieben?", "choices": ["Neu und glänzend", "Alt mit knarrenden Dielen", "Sehr klein", "Ohne Fenster"], "answer": 1 },
+      { "id": "q2", "q": "Was hört man manchmal?", "choices": ["Musik", "Den Wind pfeifen", "Katzenmiauen", "Kinderlachen"], "answer": 1 },
+      { "id": "q3", "q": "Wo steht das Haus?", "choices": ["In der Stadtmitte", "Am Ende der Straße", "Auf dem Berg", "Im Wald"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-3",
+    "title": "Der kleine Garten",
+    "difficulty": "medium",
+    "text": "Im kleinen Garten wachsen Tomaten, Kräuter und verschiedene Blumen. Der Vater gießt abends und kontrolliert, ob Schädlinge vorhanden sind.",
+    "questions": [
+      { "id": "q1", "q": "Was wächst im Garten?", "choices": ["Autos", "Tomaten und Kräuter", "Bücher", "Fische"], "answer": 1 },
+      { "id": "q2", "q": "Wann gießt der Vater?", "choices": ["Morgens", "Abends", "Mittags", "Nie"], "answer": 1 },
+      { "id": "q3", "q": "Worauf achtet er?", "choices": ["Ob Schädlinge vorhanden sind", "Ob Felsen da sind", "Ob Vögel singen", "Ob der Fernseher an ist"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-medium-4",
+    "title": "Die Bibliothek",
+    "difficulty": "medium",
+    "text": "In der Stadtbibliothek stehen Regale voller Bücher. Es gibt einen ruhigen Lesebereich und einen Bereich für Kinder mit bunten Büchern und Spielen.",
+    "questions": [
+      { "id": "q1", "q": "Was gibt es in der Bibliothek?", "choices": ["Regale voller Bücher", "Viele Autos", "Kinos", "Spielplätze"], "answer": 0 },
+      { "id": "q2", "q": "Wie ist der Lesebereich beschrieben?", "choices": ["Laut und voll", "Ruhig", "Dunkel", "Gefährlich"], "answer": 1 },
+      { "id": "q3", "q": "Für wen ist der bunte Bereich?", "choices": ["Senioren", "Kinder", "Politiker", "Den Lehrern"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-5",
+    "title": "Die Fundgrube",
+    "difficulty": "medium",
+    "text": "Auf dem Flohmarkt findet man alte Dinge: Bücher, Spielzeug und Bilderrahmen. Einige Besucher suchen nach besonderen Sammlerstücken.",
+    "questions": [
+      { "id": "q1", "q": "Was findet man auf dem Flohmarkt?", "choices": ["Neue Handys", "Alte Dinge wie Bücher und Spielzeug", "Nur Kleidung", "Lebensmittel"], "answer": 1 },
+      { "id": "q2", "q": "Wonach suchen einige Besucher?", "choices": ["Besondere Sammlerstücke", "Neue Autos", "Ferienwohnungen", "Kinokarten"], "answer": 0 },
+      { "id": "q3", "q": "Ist der Flohmarkt ein Ort für frische Lebensmittel?", "choices": ["Ja", "Nein", "Manchmal", "Nur im Winter"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-6",
+    "title": "Das Schulfest",
+    "difficulty": "medium",
+    "text": "Beim Schulfest gibt es Stände mit Spielen, Kuchen und Musik. Eltern und Kinder feiern zusammen, und es gibt kleine Auftritte der Klassen.",
+    "questions": [
+      { "id": "q1", "q": "Was gibt es an Ständen?", "choices": ["Spiele, Kuchen und Musik", "Nur Autos", "Banken", "Krankenhäuser"], "answer": 0 },
+      { "id": "q2", "q": "Wer feiert zusammen?", "choices": ["Nur die Lehrer", "Eltern und Kinder", "Nur die Kinder", "Niemand"], "answer": 1 },
+      { "id": "q3", "q": "Was gibt es von den Klassen?", "choices": ["Auftritte", "Schlafenszeit", "Stille", "Hausaufgaben"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-medium-7",
+    "title": "Der verlorene Schlüssel",
+    "difficulty": "medium",
+    "text": "Jana sucht ihren Schlüssel, den sie gestern im Garten verloren hat. Sie sucht unter den Blumen und hinter dem Komposthaufen, aber der Schlüssel ist nicht da.",
+    "questions": [
+      { "id": "q1", "q": "Wo hat Jana den Schlüssel verloren?", "choices": ["Im Haus", "Im Garten", "In der Schule", "Im Supermarkt"], "answer": 1 },
+      { "id": "q2", "q": "Wo hat sie nicht nachgesehen?", "choices": ["Unter den Blumen", "Hinter dem Komposthaufen", "Im Kühlschrank", "Im Wohnzimmer"], "answer": 2 },
+      { "id": "q3", "q": "Hat Jana den Schlüssel schon gefunden?", "choices": ["Ja", "Nein", "Vielleicht", "Nicht erwähnt"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-8",
+    "title": "Die Fahrradtour",
+    "difficulty": "medium",
+    "text": "Eine Gruppe macht eine Fahrradtour durch die Landschaft. Sie halten an einer Wiese, um ein Picknick zu machen und die Aussicht zu genießen.",
+    "questions": [
+      { "id": "q1", "q": "Was macht die Gruppe?", "choices": ["Sie schwimmt", "Sie macht eine Fahrradtour", "Sie spielt Theater", "Sie kocht"], "answer": 1 },
+      { "id": "q2", "q": "Wo halten sie an?", "choices": ["An einer Wiese", "Im Supermarkt", "Am Bahnhof", "Im Kino"], "answer": 0 },
+      { "id": "q3", "q": "Warum halten sie an?", "choices": ["Um zu schlafen", "Um ein Picknick zu machen", "Um zu arbeiten", "Um zu lernen"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-9",
+    "title": "Der neue Nachbar",
+    "difficulty": "medium",
+    "text": "Ein neuer Nachbar zieht ins Haus nebenan. Er begrüßt freundlich die Nachbarn und bringt einen Korb mit Keksen mit, um sich vorzustellen.",
+    "questions": [
+      { "id": "q1", "q": "Was macht der neue Nachbar?", "choices": ["Er streitet", "Er begrüßt die Nachbarn", "Er rennt weg", "Er singt laut"], "answer": 1 },
+      { "id": "q2", "q": "Was bringt er mit?", "choices": ["Ein Fahrrad", "Einen Korb mit Keksen", "Einen Hund", "Eine Blume"], "answer": 1 },
+      { "id": "q3", "q": "Warum bringt er etwas mit?", "choices": ["Um zu helfen", "Um sich vorzustellen", "Um wegzulaufen", "Um zu bauen"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-medium-10",
+    "title": "Der Wochenmarkt",
+    "difficulty": "medium",
+    "text": "Auf dem Wochenmarkt verkaufen Bauern frisches Gemüse, Obst und selbstgemachte Marmelade. Kunden vergleichen die Preise und probieren Kostproben.",
+    "questions": [
+      { "id": "q1", "q": "Wer verkauft auf dem Markt?", "choices": ["Lehrer", "Bauern", "Ärzte", "Schüler"], "answer": 1 },
+      { "id": "q2", "q": "Was probieren Kunden?", "choices": ["Kostproben", "Kleidung", "Elektronik", "Autos"], "answer": 0 },
+      { "id": "q3", "q": "Was wird auf dem Markt angeboten?", "choices": ["Frisches Gemüse und Obst", "Nur Kleidung", "Nur Bücher", "Nur Möbel"], "answer": 0 }
+    ]
+  },
+
+  {
+    "id": "lesen-hard-1",
+    "title": "Der Wissenschaftsclub",
+    "difficulty": "hard",
+    "text": "Im Wissenschaftsclub experimentieren Kinder mit einfachen Chemieversuchen. Sie messen Mengen sorgfältig ab und notieren die Beobachtungen, um Hypothesen zu testen.",
+    "questions": [
+      { "id": "q1", "q": "Was machen die Kinder im Club?", "choices": ["Sie malen Bilder", "Sie experimentieren mit Chemieversuchen", "Sie spielen Fußball", "Sie backen Kuchen"], "answer": 1 },
+      { "id": "q2", "q": "Was tun sie mit Messungen?", "choices": ["Sie ignorieren sie", "Sie messen Mengen sorgfältig ab", "Sie schätzen nur", "Sie zerstören Geräte"], "answer": 1 },
+      { "id": "q3", "q": "Warum notieren sie Beobachtungen?", "choices": ["Um Hypothesen zu testen", "Zum Spaß", "Um zu schlafen", "Um zu rennen"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-2",
+    "title": "Die Wetterstation",
+    "difficulty": "hard",
+    "text": "An der Wetterstation zeichnen die Schüler Daten auf: Temperatur, Niederschlag und Windstärke. Diese Informationen helfen, das lokale Klima besser zu verstehen.",
+    "questions": [
+      { "id": "q1", "q": "Welche Daten zeichnen die Schüler auf?", "choices": ["Nur Temperatur", "Temperatur, Niederschlag und Windstärke", "Nur Wind", "Nur Niederschlag"], "answer": 1 },
+      { "id": "q2", "q": "Wozu dienen die Informationen?", "choices": ["Um das lokale Klima zu verstehen", "Um zu kochen", "Um zu malen", "Um zu laufen"], "answer": 0 },
+      { "id": "q3", "q": "Wer zeichnet die Daten auf?", "choices": ["Die Lehrer allein", "Die Schüler", "Die Tiere", "Die Autos"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-hard-3",
+    "title": "Die Urlaubsplanung",
+    "difficulty": "hard",
+    "text": "Familie Meyer plant den Sommerurlaub. Sie vergleichen Ziele, berücksichtigen das Budget und entscheiden sich schließlich für einen Campingurlaub in den Bergen.",
+    "questions": [
+      { "id": "q1", "q": "Was tun die Meyers?", "choices": ["Sie arbeiten", "Sie planen den Sommerurlaub", "Sie verkaufen ihr Haus", "Sie renovieren die Küche"], "answer": 1 },
+      { "id": "q2", "q": "Was berücksichtigen sie?", "choices": ["Das Budget", "Nur das Wetter", "Nur die Freunde", "Nichts"], "answer": 0 },
+      { "id": "q3", "q": "Wofür entscheiden sie sich?", "choices": ["Für eine Kreuzfahrt", "Für einen Campingurlaub", "Für eine Städtereise", "Für einen Konzertbesuch"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-hard-4",
+    "title": "Der Gemeinschaftsgarten",
+    "difficulty": "hard",
+    "text": "Im Gemeinschaftsgarten arbeiten Nachbarn zusammen: Sie pflanzen Gemüse, teilen Werkzeuge und organisieren gemeinsame Erntetage. Kinder lernen dort den Umgang mit Pflanzen.",
+    "questions": [
+      { "id": "q1", "q": "Was machen die Nachbarn im Garten?", "choices": ["Sie streiten", "Sie pflanzen Gemüse und teilen Werkzeuge", "Sie verkaufen Häuser", "Sie fahren weg"], "answer": 1 },
+      { "id": "q2", "q": "Was organisieren sie?", "choices": ["Partys jede Woche", "Gemeinsame Erntetage", "Tägliche Kämpfe", "Gar nichts"], "answer": 1 },
+      { "id": "q3", "q": "Was lernen Kinder dort?", "choices": ["Den Umgang mit Pflanzen", "Wie man rennt", "Wie man singt", "Wie man schreibt"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-5",
+    "title": "Die Energieeinsparung",
+    "difficulty": "hard",
+    "text": "In der Schule lernen die Kinder über Energiesparen: Sie schalten Lichter aus, benutzen Energiesparlampen und achten auf einen sparsamen Wasserverbrauch.",
+    "questions": [
+      { "id": "q1", "q": "Was lernen die Kinder?", "choices": ["Energiesparen", "Kochen", "Fahrzeugbau", "Musik"], "answer": 0 },
+      { "id": "q2", "q": "Welche Maßnahme wird genannt?", "choices": ["Mehr Licht einschalten", "Lichter ausschalten", "Wasser verschwenden", "Geräte zerstören"], "answer": 1 },
+      { "id": "q3", "q": "Worauf achten sie außerdem?", "choices": ["Auf sparsamen Wasserverbrauch", "Auf schnelles Laufen", "Auf laute Musik", "Auf teures Essen"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-6",
+    "title": "Die Renovierung",
+    "difficulty": "hard",
+    "text": "Die Familie renoviert das alte Haus: Türen werden gestrichen, Wände werden verputzt und neue Regale werden eingebaut. Jeder hat eine Aufgabe.",
+    "questions": [
+      { "id": "q1", "q": "Was passiert im Haus?", "choices": ["Es wird renoviert", "Es wird abgerissen", "Es brennt", "Es wird verkauft"], "answer": 0 },
+      { "id": "q2", "q": "Was machen sie mit den Wänden?", "choices": ["Sie verputzen sie", "Sie entfernen sie", "Sie brennen sie", "Sie ignorieren sie"], "answer": 0 },
+      { "id": "q3", "q": "Hat jeder eine Aufgabe?", "choices": ["Ja", "Nein", "Nicht erwähnt", "Vielleicht"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-7",
+    "title": "Das Tierheim",
+    "difficulty": "hard",
+    "text": "Im Tierheim kümmern sich Freiwillige um Hunde und Katzen: Sie füttern, reinigen Käfige und suchen für Tiere neue Besitzer. Oft lernen Kinder Verantwortung.",
+    "questions": [
+      { "id": "q1", "q": "Wer kümmert sich um die Tiere?", "choices": ["Gärtner", "Freiwillige", "Fahrer", "Mechaniker"], "answer": 1 },
+      { "id": "q2", "q": "Was tun die Freiwilligen?", "choices": ["Sie füttern und reinigen Käfige", "Sie bauen Autos", "Sie schreiben Bücher", "Sie verkaufen Tickets"], "answer": 0 },
+      { "id": "q3", "q": "Was lernen Kinder oft dort?", "choices": ["Verantwortung", "Schlafen", "Lügen", "Schnellsein"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-8",
+    "title": "Die Umweltexkursion",
+    "difficulty": "hard",
+    "text": "Bei der Umweltexkursion beobachten Schüler Vögel, sammeln Müll und besprechen Maßnahmen zum Schutz der Natur. Die Gruppe dokumentiert ihre Ergebnisse sorgfältig.",
+    "questions": [
+      { "id": "q1", "q": "Was beobachten die Schüler?", "choices": ["Autos", "Vögel", "Fernseher", "Fabriken"], "answer": 1 },
+      { "id": "q2", "q": "Was sammeln sie?", "choices": ["Müll", "Steine", "Spielzeug", "Bücher"], "answer": 0 },
+      { "id": "q3", "q": "Wie dokumentieren sie?", "choices": ["Nachlässig", "Sorgfältig", "Gar nicht", "Sehr schnell"], "answer": 1 }
+    ]
+  },
+  {
+    "id": "lesen-hard-9",
+    "title": "Die Stadttour",
+    "difficulty": "hard",
+    "text": "Bei einer Stadttour erfahren die Teilnehmer historische Fakten über Gebäude, besuchen Museen und hören Geschichten über frühere Zeiten. Der Reiseführer erklärt Zusammenhänge.",
+    "questions": [
+      { "id": "q1", "q": "Was erfahren die Teilnehmer?", "choices": ["Nur aktuelle Lieder", "Historische Fakten", "Nur Preise", "Sportereignisse"], "answer": 1 },
+      { "id": "q2", "q": "Wohin gehen sie?", "choices": ["Ins Kino", "In Museen", "Ins Schwimmbad", "Zum Bäcker"], "answer": 1 },
+      { "id": "q3", "q": "Was macht der Reiseführer?", "choices": ["Er erklärt Zusammenhänge", "Er tanzt", "Er verkauft Essen", "Er schläft"], "answer": 0 }
+    ]
+  },
+  {
+    "id": "lesen-hard-10",
+    "title": "Die Medienarbeit",
+    "difficulty": "hard",
+    "text": "In der Schulzeitung schreiben Schüler Artikel über Projekte, führen Interviews und bearbeiten Texte. Die Redaktion trifft sich regelmäßig, um Beiträge zu planen.",
+    "questions": [
+      { "id": "q1", "q": "Was machen die Schüler?", "choices": ["Sie schreiben Artikel und führen Interviews", "Sie bauen Häuser", "Sie spielen Fußball", "Sie schlafen"], "answer": 0 },
+      { "id": "q2", "q": "Wie oft trifft sich die Redaktion?", "choices": ["Regelmäßig", "Nie", "Nur einmal im Jahr", "Täglich"], "answer": 0 },
+      { "id": "q3", "q": "Wofür planen sie Beiträge?", "choices": ["Für die Schulzeitung", "Für eine Party", "Für Werbung", "Für einen Film"], "answer": 0 }
+    ]
+  }
+]
