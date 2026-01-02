@@ -43,7 +43,7 @@ export function createModule(options = {}) {
 
       // prepare question element but keep it hidden until text is covered
       const q = t.questions && t.questions[0];
-      const qEl = document.createElement('div'); qEl.className = 'mc-question'; qEl.style.display = 'none';
+      const qEl = document.createElement('div'); qEl.className = 'mc-question';
       if (q) {
         const qText = document.createElement('p'); qText.textContent = q.q;
         qEl.appendChild(qText);
@@ -68,8 +68,6 @@ export function createModule(options = {}) {
         p.classList.add('covered');
         // optionally hide text content for screenreaders
         p.setAttribute('aria-hidden', 'true');
-        // reveal question
-        qEl.style.display = '';
         currentTimer = null;
       }, dur);
     }

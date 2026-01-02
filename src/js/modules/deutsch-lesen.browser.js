@@ -43,7 +43,7 @@
 
         // prepare question element but keep it hidden until text is covered
         const q = t.questions && t.questions[0];
-        const qEl = document.createElement('div'); qEl.className = 'mc-question'; qEl.style.display = 'none';
+        const qEl = document.createElement('div'); qEl.className = 'mc-question';
         if (q) {
           const qText = document.createElement('p'); qText.textContent = q.q;
           qEl.appendChild(qText);
@@ -63,7 +63,6 @@
         currentTimer = setTimeout(() => {
           p.classList.add('covered');
           p.setAttribute('aria-hidden', 'true');
-          qEl.style.display = '';
           currentTimer = null;
         }, dur);
       }
