@@ -118,11 +118,12 @@
                 if (css) css.href = 'style.css?v=' + v;
 
                 // load modular scripts in order: app, math, german
-                const scripts = ['app.js','math.js','german.js'];
+                const scripts = ['app.js','math.js','src/js/modules/german-core.browser.js','german.js'];
+                // Append scripts sequentially with async=false to preserve execution order
                 scripts.forEach((src) => {
                     const s = document.createElement('script');
                     s.src = src + '?v=' + v;
-                    s.defer = true;
+                    s.async = false;
                     document.body.appendChild(s);
                 });
             } catch (e) {

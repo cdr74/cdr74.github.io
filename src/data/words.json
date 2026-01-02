@@ -1,0 +1,10 @@
+[
+  ["der","artikel"], ["die","artikel"], ["das","artikel"], ["dem","artikel"], ["den","artikel"], ["ein","artikel"], ["eine","artikel"], ["einem","artikel"], ["einen","artikel"], ["dessen","artikel"], ["welcher","artikel"],
+  ["Haus","nomen"], ["Baum","nomen"], ["Tisch","nomen"], ["Auto","nomen"], ["Buch","nomen"], ["Katze","nomen"], ["Lehrer","nomen"], ["Schule","nomen"], ["Fenster","nomen"], ["Stadt","nomen"], ["Freund","nomen"], ["Gedanke","nomen"], ["Erfahrung","nomen"], ["Bewegung","nomen"],
+  ["ich","pronomen"], ["du","pronomen"], ["er","pronomen"], ["sie","pronomen"], ["wir","pronomen"], ["mich","pronomen"], ["dich","pronomen"], ["uns","pronomen"], ["euch","pronomen"], ["jemand","pronomen"], ["niemand","pronomen"],
+  ["laufen","verb"], ["schreiben","verb"], ["springen","verb"], ["essen","verb"], ["trinken","verb"], ["lernen","verb"], ["lesen","verb"], ["spielen","verb"], ["arbeiten","verb"], ["erforschen","verb"], ["analysieren","verb"], ["beschreiben","verb"],
+  ["klein","adjektiv"], ["schnell","adjektiv"], ["laut","adjektiv"], ["ruhig","adjektiv"], ["schön","adjektiv"], ["kleiner","adjektiv"], ["langsam","adjektiv"], ["interessant","adjektiv"], ["hell","adjektiv"], ["kompliziert","adjektiv"], ["auffällig","adjektiv"], ["verdächtig","adjektiv"],
+  ["heute","adverb"], ["gestern","adverb"], ["morgen","adverb"], ["manchmal","adverb"], ["bald","adverb"], ["sofort","adverb"], ["soeben","adverb"], ["gelegentlich","adverb"], ["zufällig","adverb"],
+  ["und","konjunktion"], ["aber","konjunktion"], ["oder","konjunktion"], ["weil","konjunktion"], ["denn","konjunktion"], ["jedoch","konjunktion"], ["obwohl","konjunktion"], ["während","konjunktion"], ["sodass","konjunktion"],
+  ["auf","praeposition"], ["mit","praeposition"], ["in","praeposition"], ["unter","praeposition"], ["neben","praeposition"], ["zwischen","praeposition"], ["trotz","praeposition"], ["wegen","praeposition"]
+]

@@ -9,47 +9,39 @@
             difficulty: 'easy'
         };
 
-        // central combined word pool (same pool used for all difficulty levels)
-        const WORDPOOL_ALL = [
-            // articles
-            ['der','artikel'], ['die','artikel'], ['das','artikel'], ['dem','artikel'], ['den','artikel'], ['ein','artikel'], ['eine','artikel'], ['einem','artikel'], ['einen','artikel'], ['dessen','artikel'], ['welcher','artikel'],
-            // nouns
-            ['Haus','nomen'], ['Baum','nomen'], ['Tisch','nomen'], ['Auto','nomen'], ['Buch','nomen'], ['Katze','nomen'], ['Lehrer','nomen'], ['Schule','nomen'], ['Fenster','nomen'], ['Stadt','nomen'], ['Freund','nomen'], ['Gedanke','nomen'], ['Erfahrung','nomen'], ['Bewegung','nomen'],
-            // pronouns
-            ['ich','pronomen'], ['du','pronomen'], ['er','pronomen'], ['sie','pronomen'], ['wir','pronomen'], ['mich','pronomen'], ['dich','pronomen'], ['uns','pronomen'], ['euch','pronomen'], ['jemand','pronomen'], ['niemand','pronomen'],
-            // verbs
-            ['laufen','verb'], ['schreiben','verb'], ['springen','verb'], ['essen','verb'], ['trinken','verb'], ['lernen','verb'], ['lesen','verb'], ['spielen','verb'], ['arbeiten','verb'], ['erforschen','verb'], ['analysieren','verb'], ['beschreiben','verb'],
-            // adjectives
-            ['klein','adjektiv'], ['schnell','adjektiv'], ['laut','adjektiv'], ['ruhig','adjektiv'], ['schön','adjektiv'], ['kleiner','adjektiv'], ['langsam','adjektiv'], ['interessant','adjektiv'], ['hell','adjektiv'], ['kompliziert','adjektiv'], ['auffällig','adjektiv'], ['verdächtig','adjektiv'],
-            // adverbs
-            ['heute','adverb'], ['gestern','adverb'], ['morgen','adverb'], ['manchmal','adverb'], ['bald','adverb'], ['sofort','adverb'], ['soeben','adverb'], ['gelegentlich','adverb'], ['zufällig','adverb'],
-            // conjunctions
-            ['und','konjunktion'], ['aber','konjunktion'], ['oder','konjunktion'], ['weil','konjunktion'], ['denn','konjunktion'], ['jedoch','konjunktion'], ['obwohl','konjunktion'], ['während','konjunktion'], ['sodass','konjunktion'],
-            // prepositions
-            ['auf','praeposition'], ['mit','praeposition'], ['in','praeposition'], ['unter','praeposition'], ['neben','praeposition'], ['zwischen','praeposition'], ['trotz','praeposition'], ['wegen','praeposition']
-        ];
+        // Note: the master wordpool was moved to `src/data/words.json`.
+        // Loading is done dynamically in `loadQuestions()` so this module is data-driven.
 
-        // difficulty -> allowed word types
-        const DIFFICULTY_TYPES = {
-            easy: ['nomen','artikel','verb','adjektiv'],
-            medium: ['nomen','artikel','verb','adjektiv','pronomen','praeposition'],
-            hard: ['nomen','artikel','verb','adjektiv','pronomen','praeposition','adverb','konjunktion']
-        };
-
-        function normalizeType(t) {
-            // unify to match labels
-            if (!t) return '';
-            t = t.toLowerCase();
-            if (t === 'nomen' || t === 'noun') return 'nomen';
-            if (t === 'pronomen' || t === 'pronoun') return 'pronomen';
-            if (t === 'verb') return 'verb';
-            if (t === 'adjektiv' || t === 'adjective') return 'adjektiv';
-            if (t === 'adverb' || t === 'adverbien' || t === 'umstandswort') return 'adverb';
-            if (t === 'konjunktion' || t === 'konjunktionen' || t === 'konj') return 'konjunktion';
-            if (t === 'praeposition' || t === 'präposition' || t === 'praepositionen') return 'praeposition';
-            if (t === 'artikel' || t === 'artikelwort' || t === 'det') return 'artikel';
-            return t;
-        }
+        // Use the shared german helpers provided by src/js/modules/german-core.browser.js
+        const CORE = (typeof window !== 'undefined' && window.GermanCore) ? window.GermanCore : (function(){
+            // fallback implementations (same behavior as core)
+            const DIFFICULTY_TYPES = {
+                easy: ['nomen','artikel','verb','adjektiv'],
+                medium: ['nomen','artikel','verb','adjektiv','pronomen','praeposition'],
+                hard: ['nomen','artikel','verb','adjektiv','pronomen','praeposition','adverb','konjunktion']
+            };
+            function normalizeType(t) {
+                if (!t) return '';
+                t = String(t).toLowerCase();
+                if (t === 'nomen' || t === 'noun') return 'nomen';
+                if (t === 'pronomen' || t === 'pronoun') return 'pronomen';
+                if (t === 'verb') return 'verb';
+                if (t === 'adjektiv' || t === 'adjective') return 'adjektiv';
+                if (t === 'adverb' || t === 'adverbien' || t === 'umstandswort') return 'adverb';
+                if (t === 'konjunktion' || t === 'konjunktionen' || t === 'konj') return 'konjunktion';
+                if (t === 'praeposition' || t === 'präposition' || t === 'praepositionen') return 'praeposition';
+                if (t === 'artikel' || t === 'artikelwort' || t === 'det') return 'artikel';
+                return t;
+            }
+            function filterWordpool(wordpool, difficulty = 'easy') {
+                const allowed = DIFFICULTY_TYPES[difficulty] || DIFFICULTY_TYPES.easy;
+                return (Array.isArray(wordpool) ? wordpool : [])
+                    .filter(item => allowed.includes(normalizeType(item[1])))
+                    .map(item => ({ word: item[0], type: normalizeType(item[1]) }));
+            }
+            function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+            return { DIFFICULTY_TYPES, normalizeType, filterWordpool, shuffle };
+        })();
 
         function renderSkeleton() {
             const container = document.getElementById('deutsch-content');
@@ -81,14 +73,30 @@
 
         function loadQuestions(difficulty) {
             state.difficulty = difficulty || 'easy';
-            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
-            // filter master pool by allowed types
-            let arr = WORDPOOL_ALL.filter(item => allowed.includes(normalizeType(item[1])) ).slice();
-            // shuffle
-            for (let i = arr.length -1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-            state.questions = arr.map(item => ({ word: item[0], type: normalizeType(item[1]) }));
+            const allowed = CORE.DIFFICULTY_TYPES[state.difficulty] || CORE.DIFFICULTY_TYPES.easy;
+            state.questions = [];
             state.index = 0; state.score = 0;
             updateScore();
+
+            // load wordpool from JSON file (data-driven)
+            (async () => {
+                try {
+                    const v = Date.now();
+                    const res = await fetch('src/data/words.json?v=' + v);
+                    if (!res.ok) throw new Error('Failed to load words.json');
+                    const wp = await res.json();
+                    // filter and normalize
+                    const arr = (Array.isArray(wp) ? wp : []).filter(item => allowed.includes(CORE.normalizeType(item[1])) ).slice();
+                    // shuffle
+                    for (let i = arr.length -1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+                    state.questions = arr.map(item => ({ word: item[0], type: CORE.normalizeType(item[1]) }));
+                    state.index = 0;
+                    // if the exercise is already rendered, show first question
+                    showQuestion();
+                } catch (err) {
+                    console.error('Error loading wordpool', err);
+                }
+            })();
         }
 
         function updateScore() {
@@ -96,15 +104,22 @@
         }
 
         function showQuestion() {
-            // allowed types for current difficulty
-            const allowed = DIFFICULTY_TYPES[state.difficulty] || DIFFICULTY_TYPES.easy;
-            // skip any questions that do not match current difficulty allowed types
+            // if questions haven't loaded yet, show a loading placeholder
+            const container = document.getElementById('deutsch-content');
+            if (!state.questions || state.questions.length === 0) {
+                if (container) container.querySelector && container.querySelector('#grammar-word') && (container.querySelector('#grammar-word').textContent = 'Lade Aufgaben...');
+                return;
+            }
+
+            // determine allowed types from the loaded questions (robust if CORE is missing)
+            const allowedFromQuestions = Array.from(new Set(state.questions.map(q => q.type)));
+            const allowed = (CORE && CORE.DIFFICULTY_TYPES && CORE.DIFFICULTY_TYPES[state.difficulty]) ? CORE.DIFFICULTY_TYPES[state.difficulty] : allowedFromQuestions;
+            // ensure index points to an allowed question
             while (state.index < state.questions.length && !allowed.includes(state.questions[state.index].type)) {
                 state.index++;
             }
             if (state.index >= state.questions.length) {
                 // finished
-                const container = document.getElementById('deutsch-content');
                 if (container) container.innerHTML = `<h3>Fertig!</h3><p>Dein Ergebnis: ${state.score} Punkte</p><p><button id="deutsch-finish-back" class="btn small">Zurück</button></p>`;
                 const back = document.getElementById('deutsch-finish-back');
                 if (back) back.addEventListener('click', () => { if (window.App) window.App.showSection('start-menu'); });
@@ -118,10 +133,11 @@
             if (wordEl) wordEl.textContent = q ? q.word : '';
             if (feedback) { feedback.className = 'feedback hidden'; feedback.textContent = ''; }
             if (nextBtn) nextBtn.classList.add('hidden');
-            // enable options and hide those not allowed for current difficulty
+            // enable options and hide those not present in allowedFromQuestions (preferred) or allowed list
+            const visibleTypes = allowedFromQuestions.length ? allowedFromQuestions : allowed;
             document.querySelectorAll('#grammar-options .option').forEach(b => {
                 const t = b.getAttribute('data-type');
-                if (!allowed.includes(t)) {
+                if (!visibleTypes.includes(t)) {
                     b.style.display = 'none';
                     b.disabled = true;
                 } else {
@@ -134,7 +150,7 @@
 
         function handleOptionClick(e) {
             const btn = e.currentTarget;
-            const selected = normalizeType(btn.getAttribute('data-type'));
+            const selected = CORE.normalizeType(btn.getAttribute('data-type'));
             const q = state.questions[state.index];
             const feedback = document.getElementById('grammar-feedback');
             const nextBtn = document.getElementById('grammar-next');
@@ -189,14 +205,16 @@
                     if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`; 
                     return;
                 }
-                // load questions
-                const diff = (difficulty === 'medium' || difficulty === 'hard') ? difficulty : 'easy';
-                loadQuestions(diff);
+                    // load questions (async). showQuestion will be invoked when load completes.
+                    const diff = (difficulty === 'medium' || difficulty === 'hard') ? difficulty : 'easy';
+                    loadQuestions(diff);
                 // wire option buttons and next
                 document.querySelectorAll('#grammar-options .option').forEach(b => b.addEventListener('click', handleOptionClick));
                 const nextBtn = document.getElementById('grammar-next');
                 if (nextBtn) nextBtn.addEventListener('click', nextQuestion);
-                showQuestion();
+                // Do not call showQuestion() here — questions are loaded asynchronously in loadQuestions()
+                // and showQuestion() is invoked after fetch completes. Calling it synchronously caused the
+                // exercise to immediately show the "Fertig" state when state.questions was still empty.
             }
         };
     })();
