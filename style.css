@@ -193,3 +193,41 @@ select:focus, input:focus {
     color: #721c24;
     border: 2px solid #f5c6cb;
 }
+
+/* Reading exercise styles */
+#reading-area {
+    text-align: left;
+}
+#reading-content {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #e6e6e6;
+    box-shadow: inset 0 1px 0 rgba(0,0,0,0.02);
+}
+.mc-question {
+    margin-top: 1rem;
+}
+.mc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+}
+.mc-options .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #efefef;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    font-size: 1rem;
+}
+.mc-options .option:hover {
+    background: #e6f0ff;
+}
+.mc-options .option:focus {
+    outline: 2px solid var(--secondary-color);
+}
