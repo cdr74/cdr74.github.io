@@ -231,3 +231,9 @@ select:focus, input:focus {
 .mc-options .option:focus {
     outline: 2px solid var(--secondary-color);
 }
+
+/* covered text state for reading exercise */
+.covered {
+    filter: blur(6px);
+    transition: filter 0.3s ease;
+}

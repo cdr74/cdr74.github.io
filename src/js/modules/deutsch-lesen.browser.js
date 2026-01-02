@@ -20,6 +20,8 @@
   function createModule() {
     let dom = null;
     let state = { texts: [], pool: [], index: 0, score: 0 };
+    let currentTimer = null;
+    const DURATION = { easy: 30000, medium: 20000, hard: 10000 };
 
     async function loadTexts() {
       if (Array.isArray(state.texts) && state.texts.length) return state.texts;
@@ -30,7 +32,7 @@
       return state.texts;
     }
 
-    function renderText(t) {
+    function renderText(t, difficulty = 'easy') {
       if (!dom) return;
       const container = dom.readingContent || null;
       if (container) {
@@ -38,9 +40,11 @@
         const h = document.createElement('h3'); h.textContent = t.title || '';
         const p = document.createElement('p'); p.textContent = t.text || '';
         container.appendChild(h); container.appendChild(p);
+
+        // prepare question element but keep it hidden until text is covered
         const q = t.questions && t.questions[0];
+        const qEl = document.createElement('div'); qEl.className = 'mc-question'; qEl.style.display = 'none';
         if (q) {
-          const qEl = document.createElement('div'); qEl.className = 'mc-question';
           const qText = document.createElement('p'); qText.textContent = q.q;
           qEl.appendChild(qText);
           const opts = document.createElement('div'); opts.className = 'mc-options';
@@ -50,8 +54,18 @@
             opts.appendChild(btn);
           });
           qEl.appendChild(opts);
-          container.appendChild(qEl);
         }
+        container.appendChild(qEl);
+
+        if (dom.nextBtn) dom.nextBtn.classList.add('hidden');
+        if (currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+        const dur = DURATION[String(difficulty) || 'easy'] || DURATION.easy;
+        currentTimer = setTimeout(() => {
+          p.classList.add('covered');
+          p.setAttribute('aria-hidden', 'true');
+          qEl.style.display = '';
+          currentTimer = null;
+        }, dur);
       }
     }
 

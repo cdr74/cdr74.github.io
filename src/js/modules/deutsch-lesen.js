@@ -17,6 +17,8 @@ export function evaluateChoice(question = {}, selectedIndex) {
 export function createModule(options = {}) {
   let dom = null;
   let state = { texts: [], pool: [], index: 0, score: 0 };
+  let currentTimer = null;
+  const DURATION = { easy: 30000, medium: 20000, hard: 10000 };
 
   async function loadTexts() {
     if (Array.isArray(state.texts) && state.texts.length) return state.texts;
@@ -30,7 +32,7 @@ export function createModule(options = {}) {
     throw new Error('No fetch available to load texts');
   }
 
-  function renderText(t) {
+  function renderText(t, difficulty = 'easy') {
     if (!dom) return;
     const container = dom.readingContent || null;
     if (container) {
@@ -38,10 +40,11 @@ export function createModule(options = {}) {
       const h = document.createElement('h3'); h.textContent = t.title || '';
       const p = document.createElement('p'); p.textContent = t.text || '';
       container.appendChild(h); container.appendChild(p);
-      // render first question
+
+      // prepare question element but keep it hidden until text is covered
       const q = t.questions && t.questions[0];
+      const qEl = document.createElement('div'); qEl.className = 'mc-question'; qEl.style.display = 'none';
       if (q) {
-        const qEl = document.createElement('div'); qEl.className = 'mc-question';
         const qText = document.createElement('p'); qText.textContent = q.q;
         qEl.appendChild(qText);
         const opts = document.createElement('div'); opts.className = 'mc-options';
@@ -51,8 +54,24 @@ export function createModule(options = {}) {
           opts.appendChild(btn);
         });
         qEl.appendChild(opts);
-        container.appendChild(qEl);
       }
+      container.appendChild(qEl);
+
+      // hide next button until after answer
+      if (dom.nextBtn) dom.nextBtn.classList.add('hidden');
+
+      // clear any previous timer
+      if (currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+      const dur = DURATION[String(difficulty) || 'easy'] || DURATION.easy;
+      // after duration, cover the text and reveal the question
+      currentTimer = setTimeout(() => {
+        p.classList.add('covered');
+        // optionally hide text content for screenreaders
+        p.setAttribute('aria-hidden', 'true');
+        // reveal question
+        qEl.style.display = '';
+        currentTimer = null;
+      }, dur);
     }
   }
 
@@ -84,7 +103,7 @@ export function createModule(options = {}) {
       state.pool = pickTextPool(state.texts, difficulty);
       state.index = 0;
       const t = state.pool[0];
-      if (t) renderText(t);
+      if (t) renderText(t, difficulty);
     },
     // expose internal helpers for testing
     _test: { filterByDifficulty, pickTextPool, evaluateChoice }
