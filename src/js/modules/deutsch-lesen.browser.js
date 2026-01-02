@@ -19,7 +19,7 @@
 
   function createModule() {
     let dom = null;
-    let state = { texts: [], pool: [], index: 0, score: 0 };
+    let state = { texts: [], pool: [], index: 0, score: 0, currentDifficulty: 'easy' };
     let currentTimer = null;
     const DURATION = { easy: 30000, medium: 20000, hard: 10000 };
 
@@ -99,7 +99,7 @@
         if (dom.nextBtn) dom.nextBtn.addEventListener('click', async () => {
           state.index = (state.index + 1) % (state.pool.length || 1);
           const t = state.pool[state.index];
-          if (t) renderText(t);
+          if (t) renderText(t, state.currentDifficulty || 'easy');
         });
       },
       async start(mode = 'reading', difficulty = 'easy') {
@@ -107,8 +107,9 @@
         await loadTexts();
         state.pool = pickTextPool(state.texts, difficulty);
         state.index = 0;
+        state.currentDifficulty = difficulty || 'easy';
         const t = state.pool[0];
-        if (t) renderText(t);
+        if (t) renderText(t, difficulty);
       }
     };
   }
