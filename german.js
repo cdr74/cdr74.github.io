@@ -79,10 +79,11 @@
             updateScore();
 
             // load wordpool from JSON file (data-driven)
-            (async () => {
+                    (async () => {
                 try {
                     const v = Date.now();
-                    const res = await fetch('src/data/words.json?v=' + v);
+                    const url = 'src/data/words.json?v=' + v;
+                    const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
                     if (!res.ok) throw new Error('Failed to load words.json');
                     const wp = await res.json();
                     // filter and normalize

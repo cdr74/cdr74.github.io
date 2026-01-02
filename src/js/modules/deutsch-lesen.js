@@ -20,11 +20,12 @@ export function createModule(options = {}) {
   let currentTimer = null;
   const DURATION = { easy: 30000, medium: 20000, hard: 10000 };
 
-  async function loadTexts() {
+    async function loadTexts() {
     if (Array.isArray(state.texts) && state.texts.length) return state.texts;
     if (typeof fetch === 'function') {
       const v = Date.now();
-      const res = await fetch('src/data/texts.json?v=' + v);
+      const url = 'src/data/texts.json?v=' + v;
+      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
       if (!res.ok) throw new Error('Failed to load texts.json');
       state.texts = await res.json();
       return state.texts;
@@ -35,6 +36,18 @@ export function createModule(options = {}) {
   function renderText(t, difficulty = 'easy') {
     if (!dom) return;
     const container = dom.readingContent || null;
+    // clear feedback from any previous question
+    if (dom && dom.feedbackDisplay) {
+      dom.feedbackDisplay.className = 'feedback hidden';
+      dom.feedbackDisplay.textContent = '';
+    }
+
+    // clear previous covered state (if any) on page
+    if (dom && dom.readingContent) {
+      const prev = dom.readingContent.querySelector && dom.readingContent.querySelector('p');
+      if (prev) { prev.classList.remove('covered'); prev.removeAttribute('aria-hidden'); }
+    }
+
     if (container) {
       container.innerHTML = '';
       const h = document.createElement('h3'); h.textContent = t.title || '';

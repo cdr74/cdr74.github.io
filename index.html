@@ -110,8 +110,28 @@
     </div>
     <!-- Cache-busting loader: appends a timestamp to CSS/JS to force fetch when updated -->
     <script>
-        (function(){
+        (async function(){
             try {
+                // Development helper: clear all CacheStorage entries and unregister service workers
+                try {
+                    if ('caches' in window) {
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(k => caches.delete(k)));
+                        console.log('Cleared CacheStorage keys:', keys);
+                    }
+                } catch (cErr) {
+                    console.warn('Failed to clear CacheStorage', cErr);
+                }
+                try {
+                    if (navigator && navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(r => r.unregister()));
+                        console.log('Unregistered service workers:', regs.length);
+                    }
+                } catch (swErr) {
+                    console.warn('Failed to unregister service workers', swErr);
+                }
+
                 const v = Date.now();
                 // update CSS link
                 const css = document.querySelector('link[rel=stylesheet][href="style.css"]');
