@@ -200,9 +200,14 @@
                 if (window.App) window.App.showSection('deutsch-area');
                 if (dom && dom.deutschScoreDisplay) dom.deutschScoreDisplay.textContent = '0';
 
+                // determine actual mode: prefer explicit param, else read from DOM select
+                let actualMode = (typeof mode === 'string' && mode) ? String(mode).toLowerCase() : null;
+                if (!actualMode && dom && dom.deutschModeSelect && dom.deutschModeSelect.value) actualMode = String(dom.deutschModeSelect.value).toLowerCase();
+                if (!actualMode) actualMode = 'grammar';
+
                 const diff = (difficulty === 'medium' || difficulty === 'hard') ? difficulty : 'easy';
 
-                if (!mode || mode === 'grammar') {
+                if (actualMode === 'grammar') {
                     // default grammar exercise
                     renderSkeleton();
                     // load questions (async). showQuestion will be invoked when load completes.
@@ -214,8 +219,8 @@
                     return;
                 }
 
-                // Reading exercise integration: mode 'reading' or 'lesen'
-                if (mode === 'reading' || mode === 'lesen') {
+                // Reading exercise integration: accept 'reading', 'lesen' or 'read'
+                if (actualMode === 'reading' || actualMode === 'lesen' || actualMode === 'read') {
                     // render a simple reading skeleton inside #deutsch-content
                     const container = document.getElementById('deutsch-content');
                     if (container) {
@@ -248,14 +253,14 @@
                         }
                     } else {
                         const placeholder = document.getElementById('deutsch-placeholder');
-                        if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`;
+                        if (placeholder) placeholder.textContent = `Noch keine Übungen für ${actualMode}.`;
                     }
                     return;
                 }
 
                 // unsupported mode
                 const placeholder = document.getElementById('deutsch-placeholder');
-                if (placeholder) placeholder.textContent = `Noch keine Übungen für ${mode}.`;
+                if (placeholder) placeholder.textContent = `Noch keine Übungen für ${actualMode}.`;
             }
         };
     })();
