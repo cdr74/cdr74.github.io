@@ -15,6 +15,7 @@
     <div class="container">
         <header>
             <h1>📏 Einheiten-Profi 📐</h1>
+            <div id="user-info-header"></div>
         </header>
         
         <section id="start-menu" class="card">
@@ -97,6 +98,14 @@
             </div>
         </section>
 
+        <section id="login" class="card hidden">
+            <div id="login-content"></div>
+        </section>
+
+        <section id="stats" class="card hidden">
+            <div id="stats-content"></div>
+        </section>
+
         <section id="deutsch-area" class="card hidden">
             <div class="score-board">
                 <span>Punkte: <span id="deutsch-score">0</span></span>
@@ -108,7 +117,7 @@
             </div>
         </section>
     </div>
-    <!-- Cache-busting loader: appends a timestamp to CSS/JS to force fetch when updated -->
+    <!-- Cache-busting and ESM entry point -->
     <script>
         (async function(){
             try {
@@ -133,23 +142,14 @@
                 }
 
                 const v = Date.now();
-                // update CSS link
+                // update CSS link with cache-busting
                 const css = document.querySelector('link[rel=stylesheet][href="style.css"]');
                 if (css) css.href = 'style.css?v=' + v;
-
-                // load modular scripts in order: app, math, german
-                const scripts = ['app.js','math.js','src/js/modules/german-core.browser.js','src/js/modules/deutsch-lesen.browser.js','german.js'];
-                // Append scripts sequentially with async=false to preserve execution order
-                scripts.forEach((src) => {
-                    const s = document.createElement('script');
-                    s.src = src + '?v=' + v;
-                    s.async = false;
-                    document.body.appendChild(s);
-                });
             } catch (e) {
-                console.error('module loader error', e);
+                console.error('cache-busting error', e);
             }
         })();
     </script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

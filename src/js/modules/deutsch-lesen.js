@@ -15,6 +15,7 @@ export function evaluateChoice(question = {}, selectedIndex) {
 }
 
 export function createModule(options = {}) {
+  const { statsTracker } = options;
   let dom = null;
   let state = { texts: [], pool: [], index: 0, score: 0, currentDifficulty: 'easy' };
   let currentTimer = null;
@@ -94,7 +95,12 @@ export function createModule(options = {}) {
       dom.feedbackDisplay.textContent = res.correct ? 'Richtig! 🎉' : `Leider falsch. Die richtige Antwort ist: ${question.choices[question.answer]}`;
       dom.feedbackDisplay.className = res.correct ? 'feedback correct' : 'feedback incorrect';
     }
-    if (res.correct) state.score += 10;
+    if (res.correct) {
+      state.score += 10;
+      if (statsTracker && statsTracker.trackGameCompletion) {
+        statsTracker.trackGameCompletion('deutsch', 10);
+      }
+    }
     if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
     if (dom.nextBtn) dom.nextBtn.classList.remove('hidden');
   }
