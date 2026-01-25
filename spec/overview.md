@@ -3,7 +3,7 @@ Projekt-Spezifikation — Übersicht
 - Ziele: Interaktive Lernübungen (Grössen, Deutsch, ...)
 - Modulare Architektur: `App.registerModule(name, module)`
 - Daten-getriebene Übungen: Wortlisten / Einheiten in `src/data`
-- Anforderungen: einfache Tests, CI, Deployment via GitHub Pages
+- Anforderungen: einfache Tests, CI, Deployment via Cloudflare Pages
  - Ziele: Interaktive, zugängliche Lernübungen (Grössen, Deutsch, ...)
  - Modulare Architektur: `App.registerModule(name, module)` — Module sollten eine kleine, testbare API (`init(dom)`, `start(...)`) bereitstellen.
  - Daten-getriebene Übungen: Wortlisten / Einheiten in `src/data` (JSON‑Fixtures als einzige Quelle für Inhalte)

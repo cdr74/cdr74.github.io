@@ -1,4 +1,4 @@
-# cdr74.github.io — Lern-Website
+# cdr74-github-io — Lern-Website
 
 ## 📚 Features
 
@@ -35,7 +35,7 @@ Siehe `workers/README.md` für vollständige Backend-Setup-Anleitung.
 
 ## 📁 Struktur
 
-**Frontend (GitHub Pages):**
+**Frontend (Cloudflare Pages):**
 - `index.html` - Hauptseite
 - `main.js` - ESM Entry Point, Dependency Injection
 - `app.js` - Core Navigation
@@ -115,9 +115,9 @@ npm run test:legacy  # Legacy Tests
 
 ## 🚢 Deployment
 
-**Frontend (GitHub Pages):**
+**Frontend (Cloudflare Pages):**
 - Automatisch bei push zu `main`
-- URL: https://cdr74.github.io/
+- URL: https://cdr74-github-io.pages.dev/
 - Kein Build: Statische Files, direkt auslieferbar
 
 **Backend (Cloudflare Workers):**

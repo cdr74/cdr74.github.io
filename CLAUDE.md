@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A German-language educational web app for children learning unit conversions (Grössen) and German grammar/reading comprehension (Deutsch). Built with pure vanilla JavaScript, no build pipeline, deployed to GitHub Pages.
+A German-language educational web app for children learning unit conversions (Grössen) and German grammar/reading comprehension (Deutsch). Built with pure vanilla JavaScript, no build pipeline, deployed to Cloudflare Pages.
 
 **Key Features:**
 - Unit conversion exercises (length, area, volume)
@@ -163,8 +163,8 @@ if (statsTracker && statsTracker.trackGameCompletion) {
 
 ## Deployment
 
-- **Platform:** GitHub Pages
-- **URL:** https://cdr74.github.io/
+- **Platform:** Cloudflare Pages
+- **URL:** https://cdr74-github-io.pages.dev/
 - **Trigger:** Automatic on push to `main` branch
 - **No build step:** Static files served directly
 

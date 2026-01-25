@@ -67,7 +67,7 @@
 - ⏳ Deploy worker: `wrangler deploy`
 - ⏳ Get deployed worker URL
 - ⏳ Update `/src/js/modules/api-client.js` with production URL
-- ⏳ Commit and push to deploy frontend to GitHub Pages
+- ⏳ Commit and push to deploy frontend to Cloudflare Pages
 
 ### Manual Testing Checklist
 - ⏳ Create new user (valid username)
@@ -156,7 +156,7 @@
 3. **Deploy Frontend** (Priority 3)
    - Commit all changes
    - Push to GitHub
-   - Verify GitHub Pages deployment
+   - Verify Cloudflare Pages deployment
 
 4. **End-to-End Testing** (Priority 4)
    - Test complete user flow
@@ -176,7 +176,7 @@
 - **Session Storage**: Current user session is stored in sessionStorage (not localStorage), so it persists across page refreshes but not across browser tabs.
 - **Graceful Degradation**: Stats tracking fails silently - if the API is down, games still work but stats aren't recorded.
 - **Daily Granularity**: Activity is aggregated by day, not individual game sessions.
-- **CORS**: Worker allows all origins (`*`). Consider restricting to `https://cdr74.github.io` in production for security.
+- **CORS**: Worker allows all origins (`*`). Consider restricting to `https://cdr74-github-io.pages.dev` in production for security.
 
 ## 🔒 Security Considerations
 
