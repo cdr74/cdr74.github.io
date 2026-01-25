@@ -16,10 +16,10 @@ export function initAuth(app) {
         }
     }
 
-    window.addEventListener('user:show-login', () => {
+    window.addEventListener('user:show-login', async () => {
         if (loginContent) {
-            renderLoginScreen(loginContent);
             app.showSection('login');
+            await renderLoginScreen(loginContent);
         }
     });
 
@@ -33,10 +33,10 @@ export function initAuth(app) {
         app.showSection('start-menu');
     });
 
-    window.addEventListener('user:show-stats', (e) => {
+    window.addEventListener('user:show-stats', async (e) => {
         if (statsContent && e.detail && e.detail.user) {
-            renderStatsScreen(statsContent, e.detail.user);
             app.showSection('stats');
+            await renderStatsScreen(statsContent, e.detail.user);
         }
     });
 
@@ -48,10 +48,10 @@ export function initAuth(app) {
 
     const currentUser = getCurrentUser();
     if (!currentUser) {
-        setTimeout(() => {
+        setTimeout(async () => {
             if (loginContent) {
-                renderLoginScreen(loginContent);
                 app.showSection('login');
+                await renderLoginScreen(loginContent);
             }
         }, 500);
     }

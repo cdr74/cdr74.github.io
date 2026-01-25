@@ -1,6 +1,7 @@
-/* auth.js - Simple user management (localStorage-based) */
+/* auth.js - User management (Cloudflare D1 backend) */
 
-const STORAGE_KEY = 'cdr74_users';
+import * as api from '../api-client.js';
+
 const CURRENT_USER_KEY = 'cdr74_current_user';
 
 /**
@@ -15,56 +16,52 @@ const CURRENT_USER_KEY = 'cdr74_current_user';
  * }
  */
 
-export function getAllUsers() {
+/**
+ * Get all users (returns array of username objects)
+ */
+export async function getAllUsers() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const response = await api.getAllUsers();
+    return response.users || [];
   } catch (err) {
     console.error('Failed to load users:', err);
-    return [];
+    throw err;
   }
 }
 
-export function saveUsers(users) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-  } catch (err) {
-    console.error('Failed to save users:', err);
-  }
-}
-
-export function createUser(username) {
+/**
+ * Create a new user
+ */
+export async function createUser(username) {
   if (!username || typeof username !== 'string') {
     throw new Error('Valid username required');
   }
-  
+
   const trimmed = username.trim();
   if (trimmed.length < 2 || trimmed.length > 20) {
     throw new Error('Username must be 2-20 characters');
   }
-  
-  const users = getAllUsers();
-  if (users.find(u => u.username.toLowerCase() === trimmed.toLowerCase())) {
-    throw new Error('Username already exists');
-  }
-  
-  const newUser = {
-    username: trimmed,
-    createdAt: Date.now(),
-    stats: {
-      groessen: { totalPlayed: 0, totalScore: 0, lastPlayed: null },
-      deutsch: { totalPlayed: 0, totalScore: 0, lastPlayed: null }
+
+  try {
+    const user = await api.createUser(trimmed);
+    return user;
+  } catch (err) {
+    if (err instanceof api.ApiError) {
+      if (err.status === 409) {
+        throw new Error('Username already exists');
+      }
+      throw new Error(err.message);
     }
-  };
-  
-  users.push(newUser);
-  saveUsers(users);
-  return newUser;
+    throw err;
+  }
 }
 
+/**
+ * Get current user from session storage (synchronous)
+ */
 export function getCurrentUser() {
   try {
-    const raw = localStorage.getItem(CURRENT_USER_KEY);
+    const raw = sessionStorage.getItem(CURRENT_USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (err) {
     console.error('Failed to load current user:', err);
@@ -72,74 +69,93 @@ export function getCurrentUser() {
   }
 }
 
+/**
+ * Set current user in session storage (synchronous)
+ */
 export function setCurrentUser(user) {
   try {
     if (user) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
+      sessionStorage.removeItem(CURRENT_USER_KEY);
     }
   } catch (err) {
     console.error('Failed to set current user:', err);
   }
 }
 
-export function loginUser(username) {
-  const users = getAllUsers();
-  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  
-  if (!user) {
-    throw new Error('User not found');
+/**
+ * Login user (authenticate and set session)
+ */
+export async function loginUser(username) {
+  try {
+    const response = await api.loginUser(username);
+    setCurrentUser(response.user);
+    return response.user;
+  } catch (err) {
+    if (err instanceof api.ApiError) {
+      if (err.status === 404) {
+        throw new Error('User not found');
+      }
+      throw new Error(err.message);
+    }
+    throw err;
   }
-  
-  setCurrentUser(user);
-  return user;
 }
 
+/**
+ * Logout user (clear session)
+ */
 export function logoutUser() {
   setCurrentUser(null);
 }
 
-export function updateUserStats(username, module, scoreIncrement) {
-  const users = getAllUsers();
-  const user = users.find(u => u.username === username);
-  
-  if (!user) {
-    throw new Error('User not found');
+/**
+ * Update user stats (record game completion)
+ */
+export async function updateUserStats(username, module, scoreIncrement) {
+  try {
+    await api.recordActivity(username, module, scoreIncrement, Date.now());
+
+    // Refresh current user stats if logged in
+    const current = getCurrentUser();
+    if (current && current.username === username) {
+      const updatedUser = await api.getUser(username);
+      setCurrentUser(updatedUser);
+      return updatedUser;
+    }
+
+    return await api.getUser(username);
+  } catch (err) {
+    if (err instanceof api.ApiError) {
+      if (err.status === 404) {
+        throw new Error('User not found');
+      }
+      throw new Error(err.message);
+    }
+    throw err;
   }
-  
-  if (!user.stats[module]) {
-    user.stats[module] = { totalPlayed: 0, totalScore: 0, lastPlayed: null };
-  }
-  
-  user.stats[module].totalPlayed++;
-  user.stats[module].totalScore += scoreIncrement;
-  user.stats[module].lastPlayed = Date.now();
-  
-  saveUsers(users);
-  
-  // Update current user if it's the same
-  const current = getCurrentUser();
-  if (current && current.username === username) {
-    setCurrentUser(user);
-  }
-  
-  return user;
 }
 
-export function deleteUser(username) {
-  const users = getAllUsers();
-  const filtered = users.filter(u => u.username !== username);
-  
-  if (filtered.length === users.length) {
-    throw new Error('User not found');
-  }
-  
-  saveUsers(filtered);
-  
-  // Logout if deleting current user
-  const current = getCurrentUser();
-  if (current && current.username === username) {
-    logoutUser();
+/**
+ * Delete user and all activity
+ */
+export async function deleteUser(username) {
+  try {
+    await api.deleteUser(username);
+
+    // Logout if deleting current user
+    const current = getCurrentUser();
+    if (current && current.username === username) {
+      logoutUser();
+    }
+  } catch (err) {
+    if (err instanceof api.ApiError) {
+      if (err.status === 404) {
+        throw new Error('User not found');
+      }
+      throw new Error(err.message);
+    }
+    throw err;
   }
 }

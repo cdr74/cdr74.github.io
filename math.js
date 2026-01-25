@@ -102,9 +102,11 @@ export function createGroessenModule(dependencies = {}) {
             if (d.feedbackDisplay) { d.feedbackDisplay.textContent = "Richtig! Super gemacht! 🎉"; d.feedbackDisplay.classList.add('correct'); }
             state.currentScore += 10; updateScore();
 
-            // Track stats
+            // Track stats (non-blocking)
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('groessen', 10);
+                statsTracker.trackGameCompletion('groessen', 10).catch(err => {
+                    console.error('Stats tracking failed:', err);
+                });
             }
 
             if (d.checkBtn) d.checkBtn.classList.add('hidden');

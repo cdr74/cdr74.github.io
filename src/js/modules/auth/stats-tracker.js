@@ -3,23 +3,24 @@
 import { getCurrentUser, updateUserStats } from './auth.js';
 
 /**
- * Track game completion and update user stats
+ * Track game completion and update user stats (async)
  * @param {string} module - 'groessen' or 'deutsch'
  * @param {number} score - Points earned in this session
  */
-export function trackGameCompletion(module, score) {
+export async function trackGameCompletion(module, score) {
   const user = getCurrentUser();
-  
+
   if (!user) {
     console.warn('No user logged in, stats not tracked');
     return;
   }
-  
+
   try {
-    updateUserStats(user.username, module, score);
+    await updateUserStats(user.username, module, score);
     console.log(`Stats updated for ${user.username}: ${module} +${score}`);
   } catch (err) {
     console.error('Failed to update stats:', err);
+    // Don't throw - graceful degradation
   }
 }
 

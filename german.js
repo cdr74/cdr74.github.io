@@ -130,9 +130,11 @@ export function createDeutschModule(dependencies = {}) {
         if (selected === q.type) {
             state.score += 10; updateScore();
 
-            // Track stats
+            // Track stats (non-blocking)
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch', 10);
+                statsTracker.trackGameCompletion('deutsch', 10).catch(err => {
+                    console.error('Stats tracking failed:', err);
+                });
             }
 
             if (feedback) { feedback.textContent = 'Richtig! 🎉'; feedback.className = 'feedback correct'; }

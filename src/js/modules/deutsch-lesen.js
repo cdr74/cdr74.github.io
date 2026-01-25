@@ -98,7 +98,9 @@ export function createModule(options = {}) {
     if (res.correct) {
       state.score += 10;
       if (statsTracker && statsTracker.trackGameCompletion) {
-        statsTracker.trackGameCompletion('deutsch', 10);
+        statsTracker.trackGameCompletion('deutsch', 10).catch(err => {
+          console.error('Stats tracking failed:', err);
+        });
       }
     }
     if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
