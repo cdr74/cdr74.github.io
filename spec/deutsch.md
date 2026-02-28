@@ -1,14 +1,40 @@
 # Deutsch — Spezifikation
 
-- Übungstypen: `grammar` (Wortarten zuordnen), später: `artikel`, `satzbau`, `konjugation`
+## Übungstypen
+
+### Grammatik (`grammar`)
+- Wortarten zuordnen
 - Schwierigkeiten:
   - `easy`: Nomen, Artikel, Verb, Adjektiv
   - `medium`: + Pronomen, Präposition
   - `hard`: + Adverb, Konjunktion
-- Akzeptanzkriterien:
-  - Beim Start einer Grammatik-Übung werden nur erlaubte Wortarten angezeigt.
-  - Wortlisten sind in `src/data/words.json` wartbar.
-  - Punktewertung: +10 pro richtig.
+- Datenquelle: `src/data/words.json`
+- Punktewertung: +10 pro richtig
+
+### Lesen (`reading`)
+- Leseverständnis mit Multiple-Choice-Fragen
+- Datenquelle: `src/data/texts.json`
+- Siehe `spec/deutsch-lesen.md` für Details
+
+### Schreiben: Artikel (`artikel`)
+- Nomen wird angezeigt, Kind wählt den richtigen Artikel (der/die/das)
+- Datenquelle: `src/data/artikel.json` (Felder: `noun`, `article`, `difficulty`)
+- 10 Fragen pro Runde, 10 Punkte pro richtige Antwort
+- Pure helper: `evaluateArtikel(selected, correct)` → `{ correct, selected, expected }`
+
+### Schreiben: Wörter ordnen (`woerter-ordnen`)
+- Wörter eines Satzes werden gemischt angezeigt; Kind tippt Wörter in richtiger Reihenfolge an
+- Datenquelle: `src/data/saetze.json` (Felder: `sentence`, `words`, `difficulty`)
+- Interpunktion ist am Wort angehängt (z.B. `"gross."`)
+- Pool-Area (gemischte Wörter) und Target-Area (zusammengesetzter Satz)
+- Pure helpers: `shuffleWords(words)`, `evaluateSentence(assembled, correct)`
+
+### Schreiben: Diktat (`diktat`)
+- Wort/Satz wird kurz angezeigt (mit visuellem Timer-Balken), dann verdeckt; Kind tippt aus Erinnerung
+- Datenquelle: `src/data/diktate.json` (Felder: `text`, `type`, `difficulty`)
+- Timer: Wort easy=5s/medium=4s/hard=3s; Satz easy=8s/medium=6s/hard=4s
+- Vergleich ist **strikt** (Gross-/Kleinschreibung beachtet, nur Whitespace getrimmt)
+- Pure helpers: `getTimerDuration(type, difficulty)`, `evaluateDiktat(input, expected)`
 
 Verbesserte Spezifikation — Deutsch Modul
 

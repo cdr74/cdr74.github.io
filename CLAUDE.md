@@ -8,7 +8,7 @@ A German-language educational web app for children learning unit conversions (Gr
 
 **Key Features:**
 - Unit conversion exercises (length, area, volume)
-- German grammar and reading comprehension
+- German grammar (word types), reading comprehension, and writing exercises (Diktat, Wörter ordnen, Artikel)
 - User authentication and statistics tracking
 - LocalStorage-based persistence
 - Pure ESM modular architecture
@@ -128,6 +128,22 @@ if (statsTracker && statsTracker.trackGameCompletion) {
 }]
 ```
 
+**Artikel:** `src/data/artikel.json`
+```json
+[{ "noun": "Hund", "article": "der", "difficulty": "easy" }, ...]
+```
+
+**Sätze (Wörter ordnen):** `src/data/saetze.json`
+```json
+[{ "sentence": "Der Hund ist gross.", "words": ["Der","Hund","ist","gross."], "difficulty": "easy" }, ...]
+```
+
+**Diktate:** `src/data/diktate.json`
+```json
+[{ "text": "Hund", "type": "word", "difficulty": "easy" }, ...]
+```
+- `type`: `"word"` or `"sentence"` (determines timer duration)
+
 ## Testing
 
 **Test structure:**
@@ -136,8 +152,11 @@ if (statsTracker && statsTracker.trackGameCompletion) {
 - Tests import ESM versions directly
 
 **Test coverage:**
-- ✅ `german-core.js` - normalizeType, filterWordpool, shuffle
+- ✅ `german-core.js` - normalizeType, filterWordpool, shuffle, filterByDifficulty
 - ✅ `deutsch-lesen.js` - filterByDifficulty, pickTextPool, evaluateChoice
+- ✅ `deutsch-artikel.js` - evaluateArtikel
+- ✅ `deutsch-ordnen.js` - shuffleWords, evaluateSentence
+- ✅ `deutsch-diktat.js` - getTimerDuration, evaluateDiktat
 - ✅ `auth.js` - createUser, login, stats tracking, deletion
 
 **When writing tests:**
@@ -184,15 +203,21 @@ if (statsTracker && statsTracker.trackGameCompletion) {
 ├── app.js              # Core App object (navigation, DOM)
 ├── app-auth.js         # Auth event handler integration
 ├── math.js             # Grössen module factory
-├── german.js           # Deutsch module factory
+├── german.js           # Deutsch module factory (routes grammar, reading, writing modes)
 ├── style.css           # Styles
 └── src/
     ├── data/
-    │   ├── words.json  # Word data for grammar exercises
-    │   └── texts.json  # Text data for reading exercises
+    │   ├── words.json      # Word data for grammar exercises
+    │   ├── texts.json      # Text data for reading exercises
+    │   ├── artikel.json    # Noun/article data for Artikel exercises
+    │   ├── saetze.json     # Sentence data for Wörter ordnen exercises
+    │   └── diktate.json    # Dictation data for Diktat exercises
     └── js/modules/
-        ├── german-core.js      # German helpers (normalize, filter)
+        ├── german-core.js      # German helpers (normalize, filter, filterByDifficulty, shuffle)
         ├── deutsch-lesen.js    # Reading comprehension module
+        ├── deutsch-artikel.js  # Artikel (der/die/das) exercise module
+        ├── deutsch-ordnen.js   # Word ordering exercise module
+        ├── deutsch-diktat.js   # Dictation exercise module
         └── auth/
             ├── auth.js         # User management
             ├── auth-ui.js      # Auth UI components

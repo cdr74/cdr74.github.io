@@ -3,7 +3,7 @@
 ## 📚 Features
 
 - **Grössen-Übungen:** Einheiten-Umrechnung (Längen, Flächen, Volumen)
-- **Deutsch-Übungen:** Grammatik, Leseverständnis
+- **Deutsch-Übungen:** Grammatik, Leseverständnis, Schreiben (Diktat, Wörter ordnen, Artikel)
 - **Benutzer-System:** Cloud-basiertes Login, Statistik-Tracking mit Cloudflare D1
 - **Tägliche Aktivitäts-Verfolgung:** Aggregierte Statistiken pro Tag und Modul
 - **Modulare Architektur:** Testbare, erweiterbare Komponenten (Pure ESM)
@@ -46,7 +46,8 @@ Siehe `workers/README.md` für vollständige Backend-Setup-Anleitung.
   - `api-client.js` - API-Client für Cloudflare Worker
   - `auth/` - User-Management, Stats-Tracking
   - `german-core.js`, `deutsch-lesen.js` - Deutsch-Logik
-- `src/data/` - JSON-Daten (Wörter, Texte)
+  - `deutsch-artikel.js`, `deutsch-ordnen.js`, `deutsch-diktat.js` - Schreiben-Module
+- `src/data/` - JSON-Daten (Wörter, Texte, Artikel, Sätze, Diktate)
 - `tests/` - Unit-Tests
 
 **Backend (Cloudflare Workers):**
@@ -66,8 +67,11 @@ npm run test:legacy  # Legacy Tests
 ```
 
 **Test-Coverage:**
-- ✅ german-core.js (normalizeType, filterWordpool, shuffle)
+- ✅ german-core.js (normalizeType, filterWordpool, shuffle, filterByDifficulty)
 - ✅ deutsch-lesen.js (filterByDifficulty, pickTextPool, evaluateChoice)
+- ✅ deutsch-artikel.js (evaluateArtikel)
+- ✅ deutsch-ordnen.js (shuffleWords, evaluateSentence)
+- ✅ deutsch-diktat.js (getTimerDuration, evaluateDiktat)
 - ✅ auth.js (createUser, login, stats, delete)
 
 ## 👤 Benutzer-System
@@ -112,6 +116,9 @@ npm run test:legacy  # Legacy Tests
 **Daten hinzufügen:**
 - Wörter: `src/data/words.json` (Array: `[word, type]`)
 - Texte: `src/data/texts.json` (Objekte mit `difficulty`, `questions`)
+- Artikel: `src/data/artikel.json` (Objekte mit `noun`, `article`, `difficulty`)
+- Sätze: `src/data/saetze.json` (Objekte mit `sentence`, `words`, `difficulty`)
+- Diktate: `src/data/diktate.json` (Objekte mit `text`, `type`, `difficulty`)
 
 ## 🚢 Deployment
 
@@ -135,6 +142,7 @@ npm run test:legacy  # Legacy Tests
 - [x] Cloud-Backend mit Cloudflare Workers + D1
 - [x] Tägliche Aktivitäts-Aggregation
 - [x] Multi-Device Sync (via Cloud-Backend)
+- [x] Schreiben-Übungen (Diktat, Wörter ordnen, Artikel der/die/das)
 - [ ] Erweiterte Metriken (Fehlerquote, Zeit)
 - [ ] Visualisierung der täglichen Aktivität (Charts)
 
