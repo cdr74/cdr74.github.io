@@ -4,6 +4,9 @@ import { App } from './app.js';
 import { createGroessenModule } from './math.js';
 import { createDeutschModule } from './german.js';
 import { createModule as createDeutschLesen } from './src/js/modules/deutsch-lesen.js';
+import { createModule as createDeutschArtikel } from './src/js/modules/deutsch-artikel.js';
+import { createModule as createDeutschOrdnen } from './src/js/modules/deutsch-ordnen.js';
+import { createModule as createDeutschDiktat } from './src/js/modules/deutsch-diktat.js';
 import { trackGameCompletion, requireLogin } from './src/js/modules/auth/stats-tracker.js';
 import { initAuth } from './app-auth.js';
 
@@ -15,10 +18,16 @@ const statsTrackerApi = {
 
 // Create modules with dependencies
 const deutschLesenModule = createDeutschLesen({ statsTracker: statsTrackerApi });
+const deutschArtikelModule = createDeutschArtikel({ statsTracker: statsTrackerApi });
+const deutschOrdnenModule = createDeutschOrdnen({ statsTracker: statsTrackerApi });
+const deutschDiktatModule = createDeutschDiktat({ statsTracker: statsTrackerApi });
 const groessenModule = createGroessenModule({ statsTracker: statsTrackerApi });
 const deutschModule = createDeutschModule({
     statsTracker: statsTrackerApi,
-    deutschLesenModule: deutschLesenModule
+    deutschLesenModule: deutschLesenModule,
+    deutschArtikelModule: deutschArtikelModule,
+    deutschOrdnenModule: deutschOrdnenModule,
+    deutschDiktatModule: deutschDiktatModule
 });
 
 // Register modules

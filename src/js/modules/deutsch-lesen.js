@@ -1,8 +1,6 @@
 /* deutsch-lesen.js — pure helpers + module factory for reading comprehension exercises */
-export function filterByDifficulty(texts = [], difficulty = 'easy') {
-  const allowed = String(difficulty || 'easy').toLowerCase();
-  return (Array.isArray(texts) ? texts : []).filter(t => String(t.difficulty || 'easy').toLowerCase() === allowed);
-}
+import { filterByDifficulty } from './german-core.js';
+export { filterByDifficulty };
 
 export function pickTextPool(texts = [], difficulty = 'easy') {
   const pool = filterByDifficulty(texts, difficulty);

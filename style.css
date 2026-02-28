@@ -376,3 +376,109 @@ select:focus, input:focus {
 .activity-table tbody tr:last-child td {
     border-bottom: none;
 }
+
+/* Artikel exercise (der/die/das) */
+.artikel-options {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    margin: 1.2rem 0;
+}
+.artikel-btn {
+    width: 100px;
+    height: 60px;
+    font-size: 1.4rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 0 #5a4d8a;
+}
+.artikel-btn:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+.artikel-correct {
+    background: linear-gradient(135deg, #43a047, #2e7d32) !important;
+    box-shadow: 0 4px 0 #1b5e20 !important;
+}
+.artikel-wrong {
+    background: linear-gradient(135deg, #e53935, #c62828) !important;
+    box-shadow: 0 4px 0 #b71c1c !important;
+}
+
+/* Wörter ordnen exercise */
+.sentence-target-area {
+    min-height: 60px;
+    border: 3px dashed #ccc;
+    border-radius: 12px;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    background: #fafafa;
+}
+.sentence-pool-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1rem 0;
+    min-height: 50px;
+}
+.tile-word {
+    padding: 8px 16px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 2px solid #90caf9;
+    box-shadow: 0 3px 0 #64b5f6;
+    cursor: pointer;
+    width: auto;
+}
+.tile-word:hover {
+    background: #bbdefb;
+}
+.tile-placed {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+    box-shadow: 0 3px 0 #81c784;
+}
+.target-hint {
+    color: #999;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+/* Diktat exercise */
+.diktat-timer-container {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin: 0.8rem 0;
+    overflow: hidden;
+}
+.diktat-timer-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 4px;
+}
+.diktat-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.3rem;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-family: inherit;
+    box-sizing: border-box;
+    text-align: center;
+}
+.diktat-input:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+}

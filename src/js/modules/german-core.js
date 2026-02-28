@@ -32,6 +32,17 @@ export function filterWordpool(wordpool, difficulty = 'easy') {
         .map(item => ({ word: item[0], type: normalizeType(item[1]) }));
 }
 
+/**
+ * Filter items by difficulty level (exact match)
+ * @param {Array} items - Array of objects with a .difficulty property
+ * @param {string} difficulty - 'easy', 'medium', or 'hard'
+ * @returns {Array}
+ */
+export function filterByDifficulty(items = [], difficulty = 'easy') {
+    const allowed = String(difficulty || 'easy').toLowerCase();
+    return (Array.isArray(items) ? items : []).filter(t => String(t.difficulty || 'easy').toLowerCase() === allowed);
+}
+
 export function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }

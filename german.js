@@ -3,7 +3,7 @@
 import * as GermanCore from './src/js/modules/german-core.js';
 
 export function createDeutschModule(dependencies = {}) {
-    const { statsTracker, deutschLesenModule } = dependencies;
+    const { statsTracker, deutschLesenModule, deutschArtikelModule, deutschOrdnenModule, deutschDiktatModule } = dependencies;
 
     let dom = null;
     let state = {
@@ -240,6 +240,107 @@ export function createDeutschModule(dependencies = {}) {
                 } else {
                     const placeholder = document.getElementById('deutsch-placeholder');
                     if (placeholder) placeholder.textContent = `Noch keine Übungen für ${actualMode}.`;
+                }
+                return;
+            }
+
+            // Artikel exercise (der/die/das)
+            if (actualMode === 'artikel') {
+                const container = document.getElementById('deutsch-content');
+                if (container) {
+                    container.innerHTML = `
+                        <div id="artikel-area">
+                            <h3>Artikel — Wähle den richtigen Artikel</h3>
+                            <div id="artikel-word" class="word-display" style="font-size:2rem;font-weight:bold;margin:1rem 0;">Wort</div>
+                            <div id="artikel-buttons" class="artikel-options">
+                                <button class="btn artikel-btn" data-artikel="der">der</button>
+                                <button class="btn artikel-btn" data-artikel="die">die</button>
+                                <button class="btn artikel-btn" data-artikel="das">das</button>
+                            </div>
+                            <div id="artikel-feedback" class="feedback hidden" aria-live="polite"></div>
+                            <div style="margin-top:0.8rem;"><button id="artikel-next" class="btn secondary hidden">Nächste</button></div>
+                        </div>`;
+                }
+                const artikelDom = Object.assign({}, dom);
+                artikelDom.container = document.getElementById('artikel-area');
+                artikelDom.wordDisplay = document.getElementById('artikel-word');
+                artikelDom.buttons = Array.from(document.querySelectorAll('#artikel-buttons .artikel-btn'));
+                artikelDom.feedbackDisplay = document.getElementById('artikel-feedback');
+                artikelDom.nextBtn = document.getElementById('artikel-next');
+                artikelDom.scoreDisplay = dom && dom.deutschScoreDisplay ? dom.deutschScoreDisplay : null;
+
+                const ma = deutschArtikelModule || (window.App && window.App.modules && window.App.modules['deutsch-artikel']);
+                if (ma) {
+                    try { if (ma.init) ma.init(artikelDom); if (ma.start) ma.start('artikel', diff); }
+                    catch (err) { console.error('Error starting deutsch-artikel module', err); }
+                }
+                return;
+            }
+
+            // Wörter ordnen exercise
+            if (actualMode === 'woerter-ordnen') {
+                const container = document.getElementById('deutsch-content');
+                if (container) {
+                    container.innerHTML = `
+                        <div id="ordnen-area">
+                            <h3>Wörter ordnen — Bilde den richtigen Satz</h3>
+                            <div id="ordnen-target" class="sentence-target-area"></div>
+                            <div id="ordnen-pool" class="sentence-pool-area"></div>
+                            <div id="ordnen-feedback" class="feedback hidden" aria-live="polite"></div>
+                            <div style="margin-top:0.8rem;display:flex;gap:0.6rem;justify-content:center;">
+                                <button id="ordnen-check" class="btn action">Prüfen</button>
+                                <button id="ordnen-next" class="btn secondary hidden">Nächste</button>
+                            </div>
+                        </div>`;
+                }
+                const ordnenDom = Object.assign({}, dom);
+                ordnenDom.container = document.getElementById('ordnen-area');
+                ordnenDom.targetArea = document.getElementById('ordnen-target');
+                ordnenDom.poolArea = document.getElementById('ordnen-pool');
+                ordnenDom.feedbackDisplay = document.getElementById('ordnen-feedback');
+                ordnenDom.checkBtn = document.getElementById('ordnen-check');
+                ordnenDom.nextBtn = document.getElementById('ordnen-next');
+                ordnenDom.scoreDisplay = dom && dom.deutschScoreDisplay ? dom.deutschScoreDisplay : null;
+
+                const mo = deutschOrdnenModule || (window.App && window.App.modules && window.App.modules['deutsch-ordnen']);
+                if (mo) {
+                    try { if (mo.init) mo.init(ordnenDom); if (mo.start) mo.start('woerter-ordnen', diff); }
+                    catch (err) { console.error('Error starting deutsch-ordnen module', err); }
+                }
+                return;
+            }
+
+            // Diktat exercise
+            if (actualMode === 'diktat') {
+                const container = document.getElementById('deutsch-content');
+                if (container) {
+                    container.innerHTML = `
+                        <div id="diktat-area">
+                            <h3>Diktat — Merke dir das Wort oder den Satz</h3>
+                            <div class="diktat-timer-container"><div id="diktat-timer-bar" class="diktat-timer-bar"></div></div>
+                            <div id="diktat-text" class="word-display" style="font-size:2rem;font-weight:bold;margin:1rem 0;">Wort</div>
+                            <input type="text" id="diktat-input" class="diktat-input hidden" placeholder="Schreibe hier..." autocomplete="off" autocapitalize="sentences">
+                            <div id="diktat-feedback" class="feedback hidden" aria-live="polite"></div>
+                            <div style="margin-top:0.8rem;display:flex;gap:0.6rem;justify-content:center;">
+                                <button id="diktat-check" class="btn action hidden">Prüfen</button>
+                                <button id="diktat-next" class="btn secondary hidden">Nächste</button>
+                            </div>
+                        </div>`;
+                }
+                const diktatDom = Object.assign({}, dom);
+                diktatDom.container = document.getElementById('diktat-area');
+                diktatDom.textDisplay = document.getElementById('diktat-text');
+                diktatDom.inputArea = document.getElementById('diktat-input');
+                diktatDom.timerBar = document.getElementById('diktat-timer-bar');
+                diktatDom.feedbackDisplay = document.getElementById('diktat-feedback');
+                diktatDom.checkBtn = document.getElementById('diktat-check');
+                diktatDom.nextBtn = document.getElementById('diktat-next');
+                diktatDom.scoreDisplay = dom && dom.deutschScoreDisplay ? dom.deutschScoreDisplay : null;
+
+                const md = deutschDiktatModule || (window.App && window.App.modules && window.App.modules['deutsch-diktat']);
+                if (md) {
+                    try { if (md.init) md.init(diktatDom); if (md.start) md.start('diktat', diff); }
+                    catch (err) { console.error('Error starting deutsch-diktat module', err); }
                 }
                 return;
             }
