@@ -9,8 +9,19 @@ import {
 } from './auth.js';
 import { getDailyActivity } from '../api-client.js';
 
+const MODULE_CONFIG = {
+  'groessen':          { label: 'Grössen',   color: '#2196F3', icon: '📏' },
+  'deutsch-grammatik': { label: 'Grammatik', color: '#4CAF50', icon: '📝' },
+  'deutsch-lesen':     { label: 'Lesen',     color: '#FF9800', icon: '📖' },
+  'deutsch-artikel':   { label: 'Artikel',   color: '#9C27B0', icon: '🔤' },
+  'deutsch-ordnen':    { label: 'Ordnen',    color: '#F44336', icon: '🔀' },
+  'deutsch-diktat':    { label: 'Diktat',    color: '#009688', icon: '✏️' },
+  'deutsch':           { label: 'Deutsch',   color: '#757575', icon: '📝' },
+};
+
+const MODULE_ORDER = ['groessen', 'deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel', 'deutsch-ordnen', 'deutsch-diktat', 'deutsch'];
+
 export async function renderLoginScreen(container) {
-  // Show loading state
   container.innerHTML = '<div class="loading">Lade Benutzer...</div>';
 
   try {
@@ -44,7 +55,6 @@ export async function renderLoginScreen(container) {
       </div>
     `;
 
-    // Event handlers
     container.querySelectorAll('.user-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const username = btn.dataset.username;
@@ -86,7 +96,6 @@ export async function renderLoginScreen(container) {
       });
     }
   } catch (err) {
-    // Show error UI
     container.innerHTML = `
       <div class="error-container">
         <p class="error">Fehler beim Laden der Benutzer: ${err.message}</p>
@@ -103,7 +112,7 @@ export async function renderLoginScreen(container) {
 
 export function renderUserInfo(container) {
   const user = getCurrentUser();
-  
+
   if (!user) {
     container.innerHTML = '<button class="btn small" id="show-login">Anmelden</button>';
     const btn = container.querySelector('#show-login');
@@ -114,7 +123,7 @@ export function renderUserInfo(container) {
     }
     return;
   }
-  
+
   container.innerHTML = `
     <div class="user-info">
       <span class="user-name">👤 ${user.username}</span>
@@ -122,7 +131,7 @@ export function renderUserInfo(container) {
       <button class="btn small" id="logout-btn">Abmelden</button>
     </div>
   `;
-  
+
   const logoutBtn = container.querySelector('#logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -130,7 +139,7 @@ export function renderUserInfo(container) {
       window.dispatchEvent(new Event('user:logout'));
     });
   }
-  
+
   const statsBtn = container.querySelector('#show-stats');
   if (statsBtn) {
     statsBtn.addEventListener('click', () => {
@@ -140,11 +149,9 @@ export function renderUserInfo(container) {
 }
 
 export async function renderStatsScreen(container, user) {
-  // Show loading state
   container.innerHTML = '<div class="loading">Lade Statistiken...</div>';
 
   try {
-    // Fetch daily activity (last 30 days)
     const { activity } = await getDailyActivity(user.username, { days: 30 });
 
     const formatDate = (timestamp) => {
@@ -152,20 +159,34 @@ export async function renderStatsScreen(container, user) {
       return new Date(timestamp).toLocaleDateString('de-DE');
     };
 
-    const formatActivityDate = (dateStr) => {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    };
-
+    // Grössen summary
     const groessen = user.stats.groessen || { totalPlayed: 0, totalScore: 0, lastPlayed: null };
-    const deutsch = user.stats.deutsch || { totalPlayed: 0, totalScore: 0, lastPlayed: null };
+    const groessenAvg = groessen.totalPlayed > 0 ? Math.round(groessen.totalScore / groessen.totalPlayed) : 0;
 
-    const groessenAvg = groessen.totalPlayed > 0
-      ? Math.round(groessen.totalScore / groessen.totalPlayed)
-      : 0;
-    const deutschAvg = deutsch.totalPlayed > 0
-      ? Math.round(deutsch.totalScore / deutsch.totalPlayed)
-      : 0;
+    // Deutsch summary — aggregate all deutsch and deutsch-* keys
+    const deutschStatKeys = Object.keys(user.stats || {}).filter(k => k === 'deutsch' || k.startsWith('deutsch-'));
+    const deutsch = { totalPlayed: 0, totalScore: 0, lastPlayed: null };
+    deutschStatKeys.forEach(k => {
+      const s = user.stats[k];
+      if (s) {
+        deutsch.totalPlayed += s.totalPlayed || 0;
+        deutsch.totalScore += s.totalScore || 0;
+        if (s.lastPlayed && (!deutsch.lastPlayed || s.lastPlayed > deutsch.lastPlayed)) {
+          deutsch.lastPlayed = s.lastPlayed;
+        }
+      }
+    });
+    const deutschAvg = deutsch.totalPlayed > 0 ? Math.round(deutsch.totalScore / deutsch.totalPlayed) : 0;
+
+    // Per-exercise totals from the last 30 days of activity
+    const exerciseTotals = {};
+    activity.forEach(row => {
+      if (!exerciseTotals[row.module]) {
+        exerciseTotals[row.module] = { gamesPlayed: 0, totalScore: 0 };
+      }
+      exerciseTotals[row.module].gamesPlayed += row.gamesPlayed;
+      exerciseTotals[row.module].totalScore += row.totalScore;
+    });
 
     container.innerHTML = `
       <div class="stats-container">
@@ -189,12 +210,12 @@ export async function renderStatsScreen(container, user) {
           </div>
         </div>
 
-        ${activity.length > 0 ? `
-          <div class="daily-activity-section">
-            <h3>📅 Aktivität der letzten 30 Tage</h3>
-            ${renderDailyActivityTable(activity, formatActivityDate)}
-          </div>
-        ` : ''}
+        <div class="daily-activity-section">
+          <h3>📅 Aktivität letzte 30 Tage</h3>
+          ${renderActivityChart(activity)}
+        </div>
+
+        ${renderExerciseBreakdown(user.stats, exerciseTotals)}
 
         <button class="btn secondary" id="close-stats">Zurück</button>
       </div>
@@ -207,7 +228,6 @@ export async function renderStatsScreen(container, user) {
       });
     }
   } catch (err) {
-    // Show error UI
     container.innerHTML = `
       <div class="error-container">
         <p class="error">Fehler beim Laden der Statistiken: ${err.message}</p>
@@ -230,37 +250,111 @@ export async function renderStatsScreen(container, user) {
   }
 }
 
-function renderDailyActivityTable(activity, formatDate) {
-  if (!activity || activity.length === 0) {
-    return '<p>Noch keine Aktivitäten vorhanden.</p>';
+function renderActivityChart(activity) {
+  const today = new Date();
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split('T')[0]);
   }
 
-  const moduleNames = {
-    groessen: '📏 Grössen',
-    deutsch: '📝 Deutsch'
-  };
+  // Map: date → { module → gamesPlayed }
+  const dayMap = {};
+  days.forEach(d => { dayMap[d] = {}; });
+  activity.forEach(row => {
+    if (dayMap[row.date] !== undefined) {
+      dayMap[row.date][row.module] = (dayMap[row.date][row.module] || 0) + row.gamesPlayed;
+    }
+  });
+
+  const maxPerDay = Math.max(1, ...days.map(d =>
+    Object.values(dayMap[d]).reduce((a, b) => a + b, 0)
+  ));
+
+  const activeModules = MODULE_ORDER.filter(mod =>
+    activity.some(row => row.module === mod)
+  );
+
+  if (activeModules.length === 0) {
+    return '<p class="chart-empty">Noch keine Aktivitäten in den letzten 30 Tagen.</p>';
+  }
+
+  // SVG layout
+  const barW = 14, barGap = 4, startX = 2;
+  const chartTop = 4, chartBottom = 100, chartH = chartBottom - chartTop;
+  const svgW = 544, svgH = 120;
+
+  let bars = '';
+  days.forEach((date, i) => {
+    const x = startX + i * (barW + barGap);
+    let currentY = chartBottom;
+
+    MODULE_ORDER.forEach(mod => {
+      const count = dayMap[date][mod] || 0;
+      if (count === 0) return;
+      const h = Math.max(2, Math.round((count / maxPerDay) * chartH));
+      currentY -= h;
+      const cfg = MODULE_CONFIG[mod] || { color: '#ccc', label: mod };
+      const dateLabel = new Date(date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+      bars += `<rect x="${x}" y="${currentY}" width="${barW}" height="${h}" fill="${cfg.color}" rx="2"><title>${dateLabel}: ${cfg.label} — ${count}x</title></rect>`;
+    });
+
+    // X-axis labels at roughly weekly intervals
+    if (i === 0 || i === 6 || i === 13 || i === 20 || i === 29) {
+      const dateLabel = new Date(date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+      bars += `<text x="${x + barW / 2}" y="${svgH - 2}" text-anchor="middle" font-size="9" fill="#999">${dateLabel}</text>`;
+    }
+  });
+
+  const legendHtml = activeModules.map(mod => {
+    const cfg = MODULE_CONFIG[mod] || { color: '#ccc', label: mod, icon: '' };
+    return `<span class="legend-item"><span class="legend-dot" style="background:${cfg.color}"></span>${cfg.icon} ${cfg.label}</span>`;
+  }).join('');
 
   return `
-    <table class="activity-table">
-      <thead>
-        <tr>
-          <th>Datum</th>
-          <th>Modul</th>
-          <th>Spiele</th>
-          <th>Punkte</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${activity.map(row => `
-          <tr>
-            <td>${formatDate(row.date)}</td>
-            <td>${moduleNames[row.module] || row.module}</td>
-            <td>${row.gamesPlayed}</td>
-            <td>${row.totalScore}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+    <div class="activity-chart-container">
+      <svg viewBox="0 0 ${svgW} ${svgH}" width="100%" xmlns="http://www.w3.org/2000/svg">
+        <line x1="${startX}" y1="${chartBottom}" x2="${svgW - startX}" y2="${chartBottom}" stroke="#e0e0e0" stroke-width="1"/>
+        ${bars}
+      </svg>
+      <div class="chart-legend">${legendHtml}</div>
+    </div>
+  `;
+}
+
+function renderExerciseBreakdown(userStats, exerciseTotals30d) {
+  const EXERCISES = [
+    { key: 'deutsch-grammatik', label: 'Grammatik', icon: '📝', color: '#4CAF50' },
+    { key: 'deutsch-lesen',     label: 'Lesen',     icon: '📖', color: '#FF9800' },
+    { key: 'deutsch-artikel',   label: 'Artikel',   icon: '🔤', color: '#9C27B0' },
+    { key: 'deutsch-ordnen',    label: 'Ordnen',    icon: '🔀', color: '#F44336' },
+    { key: 'deutsch-diktat',    label: 'Diktat',    icon: '✏️', color: '#009688' },
+  ];
+
+  const cards = EXERCISES.map(ex => {
+    const allTime = userStats[ex.key] || { totalPlayed: 0 };
+    const recent = exerciseTotals30d[ex.key] || { gamesPlayed: 0 };
+    if (allTime.totalPlayed === 0 && recent.gamesPlayed === 0) return null;
+    return `
+      <div class="exercise-mini-card">
+        <div class="exercise-mini-dot" style="background:${ex.color}"></div>
+        <div class="exercise-mini-name">${ex.icon} ${ex.label}</div>
+        <div class="exercise-mini-stat">${allTime.totalPlayed}x gespielt</div>
+        <div class="exercise-mini-secondary">${recent.gamesPlayed}x letzte 30T</div>
+      </div>
+    `;
+  }).filter(Boolean);
+
+  if (cards.length === 0) return '';
+
+  return `
+    <div class="exercise-breakdown-section">
+      <h3>📊 Deutsch — Details</h3>
+      <div class="exercise-breakdown-grid">
+        ${cards.join('')}
+      </div>
+    </div>
   `;
 }
 

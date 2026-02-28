@@ -342,39 +342,100 @@ select:focus, input:focus {
     text-align: center;
 }
 
-.activity-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
+/* Activity bar chart */
+.activity-chart-container {
+    margin-top: 0.5rem;
 }
 
-.activity-table th,
-.activity-table td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+.activity-chart-container svg {
+    display: block;
 }
 
-.activity-table th {
-    background: var(--primary-color);
-    color: white;
-    font-weight: bold;
-    font-size: 1rem;
+.chart-empty {
+    text-align: center;
+    color: #888;
+    margin: 1rem 0;
 }
 
-.activity-table tr:hover {
-    background: #f8f9fa;
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    justify-content: center;
+    margin-top: 0.5rem;
 }
 
-.activity-table td:not(:first-child) {
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+}
+
+.legend-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Deutsch exercise breakdown */
+.exercise-breakdown-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f5f5f5;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+}
+
+.exercise-breakdown-section h3 {
+    margin: 0 0 1rem 0;
+    color: var(--secondary-color);
     text-align: center;
 }
 
-.activity-table tbody tr:last-child td {
-    border-bottom: none;
+.exercise-breakdown-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.exercise-mini-card {
+    background: white;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    text-align: center;
+    flex: 1;
+    min-width: 90px;
+    max-width: 120px;
+}
+
+.exercise-mini-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+}
+
+.exercise-mini-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin: 0.2rem 0;
+}
+
+.exercise-mini-stat {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.exercise-mini-secondary {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.15rem;
 }
 
 /* Artikel exercise (der/die/das) */

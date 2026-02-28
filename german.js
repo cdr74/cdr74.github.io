@@ -132,7 +132,7 @@ export function createDeutschModule(dependencies = {}) {
 
             // Track stats (non-blocking)
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch', 10).catch(err => {
+                statsTracker.trackGameCompletion('deutsch-grammatik', 10).catch(err => {
                     console.error('Stats tracking failed:', err);
                 });
             }

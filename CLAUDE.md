@@ -106,9 +106,12 @@ Custom events coordinate app-wide state:
 // Stats tracker is injected into modules
 const groessenModule = createGroessenModule({ statsTracker: statsTrackerApi });
 
-// Inside the module, use the injected dependency
+// Inside the module, use the injected dependency with specific exercise module name
 if (statsTracker && statsTracker.trackGameCompletion) {
     statsTracker.trackGameCompletion('groessen', 10);
+    // Deutsch sub-exercises use specific names:
+    // 'deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel',
+    // 'deutsch-ordnen', 'deutsch-diktat'
 }
 ```
 
@@ -189,6 +192,7 @@ if (statsTracker && statsTracker.trackGameCompletion) {
 
 ## Important Notes
 
+- **Keep documentation in sync:** Every code change must be reflected in the relevant documentation files (`CLAUDE.md`, `README.md`, `spec/*.md`, `tests/README.md`). When adding modules, data files, or tests, update the file structure, test coverage, data structure sections, and specs accordingly.
 - **No frameworks:** Pure vanilla JavaScript, no React/Vue/Angular
 - **No bundler:** ESM scripts loaded directly in browser, no webpack/vite
 - **Browser compatibility:** Targets modern browsers (ES6+ with native ESM support)
