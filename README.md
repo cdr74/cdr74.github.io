@@ -143,8 +143,8 @@ npm run test:legacy  # Legacy Tests
 - [x] Tägliche Aktivitäts-Aggregation
 - [x] Multi-Device Sync (via Cloud-Backend)
 - [x] Schreiben-Übungen (Diktat, Wörter ordnen, Artikel der/die/das)
-- [ ] Erweiterte Metriken (Fehlerquote, Zeit)
-- [ ] Visualisierung der täglichen Aktivität (Charts)
+- [x] Erweiterte Metriken (Fehlerquote, Zeit)
+- [x] Visualisierung der täglichen Aktivität (Charts)
 
 ## 🤝 Beitragen
 

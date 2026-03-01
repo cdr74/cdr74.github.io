@@ -10,7 +10,8 @@ export function createDeutschModule(dependencies = {}) {
         score: 0,
         index: 0,
         questions: [],
-        difficulty: 'easy'
+        difficulty: 'easy',
+        questionStartTime: null
     };
 
     function renderSkeleton() {
@@ -104,6 +105,7 @@ export function createDeutschModule(dependencies = {}) {
         if (wordEl) wordEl.textContent = q ? q.word : '';
         if (feedback) { feedback.className = 'feedback hidden'; feedback.textContent = ''; }
         if (nextBtn) nextBtn.classList.add('hidden');
+        state.questionStartTime = Date.now();
         // enable options and hide those not present in allowedFromQuestions (preferred) or allowed list
         const visibleTypes = allowedFromQuestions.length ? allowedFromQuestions : allowed;
         document.querySelectorAll('#grammar-options .option').forEach(b => {
@@ -126,6 +128,7 @@ export function createDeutschModule(dependencies = {}) {
         const feedback = document.getElementById('grammar-feedback');
         const nextBtn = document.getElementById('grammar-next');
         // disable options
+        const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
         document.querySelectorAll('#grammar-options .option').forEach(b => b.disabled = true);
         if (selected === q.type) {
             state.score += 10; updateScore();
@@ -140,6 +143,16 @@ export function createDeutschModule(dependencies = {}) {
             if (feedback) { feedback.textContent = 'Richtig! 🎉'; feedback.className = 'feedback correct'; }
         } else {
             if (feedback) { feedback.textContent = `Falsch — richtig wäre: ${typeLabel(q.type)}`; feedback.className = 'feedback incorrect'; }
+
+            // Track wrong answer
+            if (statsTracker && statsTracker.trackGameCompletion) {
+                statsTracker.trackGameCompletion('deutsch-grammatik', 0).catch(err => {
+                    console.error('Stats tracking failed:', err);
+                });
+            }
+        }
+        if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+            statsTracker.saveResponseTime('deutsch-grammatik', elapsed);
         }
         if (nextBtn) nextBtn.classList.remove('hidden');
     }

@@ -20,13 +20,23 @@ export function validateUsername(username) {
   return { valid: true, username: trimmed };
 }
 
+const VALID_MODULES = [
+  'groessen',
+  'deutsch',
+  'deutsch-grammatik',
+  'deutsch-lesen',
+  'deutsch-artikel',
+  'deutsch-ordnen',
+  'deutsch-diktat',
+];
+
 export function validateModule(module) {
   if (!module || typeof module !== 'string') {
     return { valid: false, error: 'Modul ist erforderlich' };
   }
 
-  if (module !== 'groessen' && module !== 'deutsch') {
-    return { valid: false, error: 'Ungültiges Modul (muss "groessen" oder "deutsch" sein)' };
+  if (!VALID_MODULES.includes(module)) {
+    return { valid: false, error: `Ungültiges Modul (muss eines von: ${VALID_MODULES.join(', ')})` };
   }
 
   return { valid: true, module };

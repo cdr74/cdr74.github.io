@@ -8,6 +8,7 @@ import {
   getCurrentUser
 } from './auth.js';
 import { getDailyActivity } from '../api-client.js';
+import { getResponseTimes } from './stats-tracker.js';
 
 const MODULE_CONFIG = {
   'groessen':          { label: 'Grössen',   color: '#2196F3', icon: '📏' },
@@ -153,15 +154,40 @@ export async function renderStatsScreen(container, user) {
 
   try {
     const { activity } = await getDailyActivity(user.username, { days: 30 });
+    const responseTimes = getResponseTimes();
 
     const formatDate = (timestamp) => {
       if (!timestamp) return 'Nie';
       return new Date(timestamp).toLocaleDateString('de-DE');
     };
 
+    const calcErrorRate = (played, score) => {
+      if (!played) return null;
+      const correct = score / 10;
+      return Math.round((1 - correct / played) * 100);
+    };
+
+    const formatAvgTime = (module) => {
+      const t = responseTimes[module];
+      if (!t || !t.count) return null;
+      return (t.totalMs / t.count / 1000).toFixed(1) + 's';
+    };
+
+    // Aggregate response time across multiple modules
+    const aggregateAvgTime = (modules) => {
+      let totalMs = 0, count = 0;
+      modules.forEach(m => {
+        const t = responseTimes[m];
+        if (t && t.count) { totalMs += t.totalMs; count += t.count; }
+      });
+      return count > 0 ? (totalMs / count / 1000).toFixed(1) + 's' : null;
+    };
+
     // Grössen summary
     const groessen = user.stats.groessen || { totalPlayed: 0, totalScore: 0, lastPlayed: null };
     const groessenAvg = groessen.totalPlayed > 0 ? Math.round(groessen.totalScore / groessen.totalPlayed) : 0;
+    const groessenErrorRate = calcErrorRate(groessen.totalPlayed, groessen.totalScore);
+    const groessenAvgTime = formatAvgTime('groessen');
 
     // Deutsch summary — aggregate all deutsch and deutsch-* keys
     const deutschStatKeys = Object.keys(user.stats || {}).filter(k => k === 'deutsch' || k.startsWith('deutsch-'));
@@ -177,6 +203,9 @@ export async function renderStatsScreen(container, user) {
       }
     });
     const deutschAvg = deutsch.totalPlayed > 0 ? Math.round(deutsch.totalScore / deutsch.totalPlayed) : 0;
+    const deutschErrorRate = calcErrorRate(deutsch.totalPlayed, deutsch.totalScore);
+    const deutschSubModules = ['deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel', 'deutsch-ordnen', 'deutsch-diktat', 'deutsch'];
+    const deutschAvgTime = aggregateAvgTime(deutschSubModules);
 
     // Per-exercise totals from the last 30 days of activity
     const exerciseTotals = {};
@@ -195,17 +224,25 @@ export async function renderStatsScreen(container, user) {
         <div class="stats-grid">
           <div class="stat-card">
             <h3>📏 Grössen</h3>
-            <p><strong>Gespielt:</strong> ${groessen.totalPlayed}x</p>
+            <p><strong>Versuche:</strong> ${groessen.totalPlayed}x</p>
             <p><strong>Gesamt-Punkte:</strong> ${groessen.totalScore}</p>
-            <p><strong>Durchschnitt:</strong> ${groessenAvg} Punkte</p>
+            ${groessenErrorRate !== null ? `
+              <p><strong>Fehlerquote:</strong> ${groessenErrorRate}%</p>
+              ${renderErrorBar(groessenErrorRate)}
+            ` : ''}
+            ${groessenAvgTime ? `<p><strong>Ø Antwortzeit:</strong> ${groessenAvgTime}</p>` : ''}
             <p><strong>Zuletzt:</strong> ${formatDate(groessen.lastPlayed)}</p>
           </div>
 
           <div class="stat-card">
             <h3>📝 Deutsch</h3>
-            <p><strong>Gespielt:</strong> ${deutsch.totalPlayed}x</p>
+            <p><strong>Versuche:</strong> ${deutsch.totalPlayed}x</p>
             <p><strong>Gesamt-Punkte:</strong> ${deutsch.totalScore}</p>
-            <p><strong>Durchschnitt:</strong> ${deutschAvg} Punkte</p>
+            ${deutschErrorRate !== null ? `
+              <p><strong>Fehlerquote:</strong> ${deutschErrorRate}%</p>
+              ${renderErrorBar(deutschErrorRate)}
+            ` : ''}
+            ${deutschAvgTime ? `<p><strong>Ø Antwortzeit:</strong> ${deutschAvgTime}</p>` : ''}
             <p><strong>Zuletzt:</strong> ${formatDate(deutsch.lastPlayed)}</p>
           </div>
         </div>
@@ -323,6 +360,12 @@ function renderActivityChart(activity) {
   `;
 }
 
+function renderErrorBar(errorRate) {
+  const pct = Math.min(100, Math.max(0, errorRate));
+  const cls = pct < 20 ? 'good' : pct < 50 ? 'medium' : 'bad';
+  return `<div class="metric-bar"><div class="metric-bar-fill ${cls}" style="width:${pct}%"></div></div>`;
+}
+
 function renderExerciseBreakdown(userStats, exerciseTotals30d) {
   const EXERCISES = [
     { key: 'deutsch-grammatik', label: 'Grammatik', icon: '📝', color: '#4CAF50' },
@@ -332,15 +375,26 @@ function renderExerciseBreakdown(userStats, exerciseTotals30d) {
     { key: 'deutsch-diktat',    label: 'Diktat',    icon: '✏️', color: '#009688' },
   ];
 
+  const times = getResponseTimes();
+
   const cards = EXERCISES.map(ex => {
-    const allTime = userStats[ex.key] || { totalPlayed: 0 };
-    const recent = exerciseTotals30d[ex.key] || { gamesPlayed: 0 };
+    const allTime = userStats[ex.key] || { totalPlayed: 0, totalScore: 0 };
+    const recent = exerciseTotals30d[ex.key] || { gamesPlayed: 0, totalScore: 0 };
     if (allTime.totalPlayed === 0 && recent.gamesPlayed === 0) return null;
+
+    const errorRate = allTime.totalPlayed > 0
+      ? Math.round((1 - (allTime.totalScore / 10) / allTime.totalPlayed) * 100)
+      : null;
+    const t = times[ex.key];
+    const avgTime = t && t.count > 0 ? (t.totalMs / t.count / 1000).toFixed(1) + 's' : null;
+
     return `
       <div class="exercise-mini-card">
         <div class="exercise-mini-dot" style="background:${ex.color}"></div>
         <div class="exercise-mini-name">${ex.icon} ${ex.label}</div>
-        <div class="exercise-mini-stat">${allTime.totalPlayed}x gespielt</div>
+        <div class="exercise-mini-stat">${allTime.totalPlayed}x versucht</div>
+        ${errorRate !== null ? `<div class="exercise-mini-error">Fehler: ${errorRate}%</div>` : ''}
+        ${avgTime ? `<div class="exercise-mini-time">Ø ${avgTime}</div>` : ''}
         <div class="exercise-mini-secondary">${recent.gamesPlayed}x letzte 30T</div>
       </div>
     `;

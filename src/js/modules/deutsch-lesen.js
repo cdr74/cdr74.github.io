@@ -15,7 +15,7 @@ export function evaluateChoice(question = {}, selectedIndex) {
 export function createModule(options = {}) {
   const { statsTracker } = options;
   let dom = null;
-  let state = { texts: [], pool: [], index: 0, score: 0, currentDifficulty: 'easy' };
+  let state = { texts: [], pool: [], index: 0, score: 0, currentDifficulty: 'easy', questionStartTime: null };
   let currentTimer = null;
   const DURATION = { easy: 30000, medium: 20000, hard: 10000 };
 
@@ -78,8 +78,8 @@ export function createModule(options = {}) {
       // after duration, cover the text and reveal the question
       currentTimer = setTimeout(() => {
         p.classList.add('covered');
-        // optionally hide text content for screenreaders
         p.setAttribute('aria-hidden', 'true');
+        state.questionStartTime = Date.now(); // start timing from when text is hidden
         currentTimer = null;
       }, dur);
     }
@@ -87,6 +87,7 @@ export function createModule(options = {}) {
 
   function handleChoice(question, idx) {
     if (!dom) return;
+    const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
     const res = evaluateChoice(question, idx);
     if (dom.feedbackDisplay) {
       dom.feedbackDisplay.classList.remove('hidden');
@@ -100,6 +101,15 @@ export function createModule(options = {}) {
           console.error('Stats tracking failed:', err);
         });
       }
+    } else {
+      if (statsTracker && statsTracker.trackGameCompletion) {
+        statsTracker.trackGameCompletion('deutsch-lesen', 0).catch(err => {
+          console.error('Stats tracking failed:', err);
+        });
+      }
+    }
+    if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+      statsTracker.saveResponseTime('deutsch-lesen', elapsed);
     }
     if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
     if (dom.nextBtn) dom.nextBtn.classList.remove('hidden');

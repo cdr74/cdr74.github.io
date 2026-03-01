@@ -438,6 +438,37 @@ select:focus, input:focus {
     margin-top: 0.15rem;
 }
 
+.exercise-mini-error {
+    font-size: 0.78rem;
+    color: #c62828;
+    margin-top: 0.15rem;
+}
+
+.exercise-mini-time {
+    font-size: 0.78rem;
+    color: #555;
+    margin-top: 0.1rem;
+}
+
+/* Error rate progress bar */
+.metric-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    margin: 0.3rem 0 0.5rem 0;
+    overflow: hidden;
+}
+
+.metric-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.metric-bar-fill.good   { background: #4CAF50; }
+.metric-bar-fill.medium { background: #FF9800; }
+.metric-bar-fill.bad    { background: #f44336; }
+
 /* Artikel exercise (der/die/das) */
 .artikel-options {
     display: flex;

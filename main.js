@@ -7,13 +7,14 @@ import { createModule as createDeutschLesen } from './src/js/modules/deutsch-les
 import { createModule as createDeutschArtikel } from './src/js/modules/deutsch-artikel.js';
 import { createModule as createDeutschOrdnen } from './src/js/modules/deutsch-ordnen.js';
 import { createModule as createDeutschDiktat } from './src/js/modules/deutsch-diktat.js';
-import { trackGameCompletion, requireLogin } from './src/js/modules/auth/stats-tracker.js';
+import { trackGameCompletion, requireLogin, saveResponseTime } from './src/js/modules/auth/stats-tracker.js';
 import { initAuth } from './app-auth.js';
 
 // Create stats tracker API object for dependency injection
 const statsTrackerApi = {
     trackGameCompletion,
-    requireLogin
+    requireLogin,
+    saveResponseTime
 };
 
 // Create modules with dependencies

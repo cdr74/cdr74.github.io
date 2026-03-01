@@ -19,7 +19,7 @@ export function evaluateDiktat(input, expected) {
 export function createModule(options = {}) {
     const { statsTracker } = options;
     let dom = null;
-    let state = { items: [], pool: [], index: 0, score: 0, total: 10, currentDifficulty: 'easy' };
+    let state = { items: [], pool: [], index: 0, score: 0, total: 10, currentDifficulty: 'easy', questionStartTime: null };
     let currentTimer = null;
 
     async function loadItems() {
@@ -72,12 +72,14 @@ export function createModule(options = {}) {
             if (dom.inputArea) { dom.inputArea.classList.remove('hidden'); dom.inputArea.focus(); }
             if (dom.checkBtn) dom.checkBtn.classList.remove('hidden');
             if (dom.timerBar) dom.timerBar.classList.add('hidden');
+            state.questionStartTime = Date.now(); // start timing from when input appears
             currentTimer = null;
         }, duration);
     }
 
     function checkAnswer() {
         if (!dom || !dom.inputArea) return;
+        const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
         const item = state.pool[state.index];
         const res = evaluateDiktat(dom.inputArea.value, item.text);
 
@@ -91,6 +93,13 @@ export function createModule(options = {}) {
             if (statsTracker && statsTracker.trackGameCompletion) {
                 statsTracker.trackGameCompletion('deutsch-diktat', 10).catch(err => console.error('Stats tracking failed:', err));
             }
+        } else {
+            if (statsTracker && statsTracker.trackGameCompletion) {
+                statsTracker.trackGameCompletion('deutsch-diktat', 0).catch(err => console.error('Stats tracking failed:', err));
+            }
+        }
+        if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+            statsTracker.saveResponseTime('deutsch-diktat', elapsed);
         }
         if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
         if (dom.checkBtn) dom.checkBtn.classList.add('hidden');

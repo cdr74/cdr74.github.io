@@ -30,6 +30,7 @@ export function createGroessenModule(dependencies = {}) {
         currentMode: 'distance',
         currentDifficulty: 'easy',
         currentProblem: null,
+        questionStartTime: null,
         dom: null
     };
 
@@ -48,6 +49,7 @@ export function createGroessenModule(dependencies = {}) {
         if (d.nextBtn) d.nextBtn.classList.add('hidden');
         if (d.checkBtn) d.checkBtn.classList.remove('hidden');
         if (d.userInput) { d.userInput.disabled = false; d.userInput.focus(); }
+        state.questionStartTime = Date.now();
 
         const units = UNITS[state.currentMode];
         let unit1Index, unit2Index;
@@ -98,6 +100,8 @@ export function createGroessenModule(dependencies = {}) {
         const epsilon = 0.0001;
         const isCorrect = Math.abs(userVal - state.currentProblem.correctAnswer) < epsilon;
         if (d.feedbackDisplay) d.feedbackDisplay.classList.remove('hidden');
+        const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
+
         if (isCorrect) {
             if (d.feedbackDisplay) { d.feedbackDisplay.textContent = "Richtig! Super gemacht! 🎉"; d.feedbackDisplay.classList.add('correct'); }
             state.currentScore += 10; updateScore();
@@ -115,10 +119,22 @@ export function createGroessenModule(dependencies = {}) {
             if (d.nextBtn) d.nextBtn.focus();
         } else {
             if (d.feedbackDisplay) { d.feedbackDisplay.textContent = `Leider falsch. Die richtige Antwort ist ${formatNumber(state.currentProblem.correctAnswer)}.`; d.feedbackDisplay.classList.add('incorrect'); }
+
+            // Track wrong answer
+            if (statsTracker && statsTracker.trackGameCompletion) {
+                statsTracker.trackGameCompletion('groessen', 0).catch(err => {
+                    console.error('Stats tracking failed:', err);
+                });
+            }
+
             if (d.checkBtn) d.checkBtn.classList.add('hidden');
             if (d.nextBtn) d.nextBtn.classList.remove('hidden');
             if (d.userInput) d.userInput.disabled = true;
             if (d.nextBtn) d.nextBtn.focus();
+        }
+
+        if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+            statsTracker.saveResponseTime('groessen', elapsed);
         }
     }
 

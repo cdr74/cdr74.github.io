@@ -13,17 +13,22 @@ CREATE TABLE daily_activity (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     activity_date TEXT NOT NULL,  -- YYYY-MM-DD format
-    module TEXT NOT NULL,         -- 'groessen' or 'deutsch'
+    module TEXT NOT NULL,         -- 'groessen', 'deutsch', or sub-modules like 'deutsch-grammatik'
     games_played INTEGER NOT NULL DEFAULT 0,
     total_score INTEGER NOT NULL DEFAULT 0,
     last_updated INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT module_check CHECK(module IN ('groessen', 'deutsch')),
+    CONSTRAINT module_check CHECK(module IN ('groessen', 'deutsch', 'deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel', 'deutsch-ordnen', 'deutsch-diktat')),
     UNIQUE(user_id, activity_date, module)
 );
 
 CREATE INDEX idx_daily_activity_user_date ON daily_activity(user_id, activity_date DESC);
 CREATE INDEX idx_daily_activity_user_module ON daily_activity(user_id, module);
+
+-- Migration for existing databases (run if upgrading from earlier schema):
+-- ALTER TABLE daily_activity DROP CONSTRAINT module_check;
+-- (SQLite doesn't support DROP CONSTRAINT — recreate the table instead)
+-- See workers/README.md for migration steps.
 
 -- View for backward-compatible aggregate stats
 CREATE VIEW module_stats AS

@@ -8,7 +8,7 @@ export function evaluateArtikel(selected, correct) {
 export function createModule(options = {}) {
     const { statsTracker } = options;
     let dom = null;
-    let state = { items: [], pool: [], index: 0, score: 0, total: 10 };
+    let state = { items: [], pool: [], index: 0, score: 0, total: 10, questionStartTime: null };
 
     async function loadItems() {
         if (Array.isArray(state.items) && state.items.length) return state.items;
@@ -37,10 +37,12 @@ export function createModule(options = {}) {
         if (dom.nextBtn) dom.nextBtn.classList.add('hidden');
         // enable buttons
         if (dom.buttons) dom.buttons.forEach(b => { b.disabled = false; b.classList.remove('artikel-correct', 'artikel-wrong'); });
+        state.questionStartTime = Date.now();
     }
 
     function handleChoice(selected) {
         if (!dom) return;
+        const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
         const item = state.pool[state.index];
         const res = evaluateArtikel(selected, item.article);
 
@@ -61,6 +63,13 @@ export function createModule(options = {}) {
             if (statsTracker && statsTracker.trackGameCompletion) {
                 statsTracker.trackGameCompletion('deutsch-artikel', 10).catch(err => console.error('Stats tracking failed:', err));
             }
+        } else {
+            if (statsTracker && statsTracker.trackGameCompletion) {
+                statsTracker.trackGameCompletion('deutsch-artikel', 0).catch(err => console.error('Stats tracking failed:', err));
+            }
+        }
+        if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+            statsTracker.saveResponseTime('deutsch-artikel', elapsed);
         }
         if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
         if (dom.nextBtn) dom.nextBtn.classList.remove('hidden');

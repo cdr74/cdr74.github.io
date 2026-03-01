@@ -14,7 +14,7 @@ export function evaluateSentence(assembled, correct) {
 export function createModule(options = {}) {
     const { statsTracker } = options;
     let dom = null;
-    let state = { items: [], pool: [], index: 0, score: 0, total: 10, assembled: [], shuffled: [] };
+    let state = { items: [], pool: [], index: 0, score: 0, total: 10, assembled: [], shuffled: [], questionStartTime: null };
 
     async function loadItems() {
         if (Array.isArray(state.items) && state.items.length) return state.items;
@@ -91,11 +91,13 @@ export function createModule(options = {}) {
         if (dom.feedbackDisplay) { dom.feedbackDisplay.className = 'feedback hidden'; dom.feedbackDisplay.textContent = ''; }
         if (dom.checkBtn) dom.checkBtn.classList.remove('hidden');
         if (dom.nextBtn) dom.nextBtn.classList.add('hidden');
+        state.questionStartTime = Date.now();
         renderTiles();
     }
 
     function checkAnswer() {
         if (!dom) return;
+        const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
         const item = state.pool[state.index];
         const res = evaluateSentence(state.assembled, item.words);
 
@@ -109,6 +111,13 @@ export function createModule(options = {}) {
             if (statsTracker && statsTracker.trackGameCompletion) {
                 statsTracker.trackGameCompletion('deutsch-ordnen', 10).catch(err => console.error('Stats tracking failed:', err));
             }
+        } else {
+            if (statsTracker && statsTracker.trackGameCompletion) {
+                statsTracker.trackGameCompletion('deutsch-ordnen', 0).catch(err => console.error('Stats tracking failed:', err));
+            }
+        }
+        if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
+            statsTracker.saveResponseTime('deutsch-ordnen', elapsed);
         }
         if (dom.scoreDisplay) dom.scoreDisplay.textContent = String(state.score);
         if (dom.checkBtn) dom.checkBtn.classList.add('hidden');

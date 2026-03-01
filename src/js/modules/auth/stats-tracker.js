@@ -2,6 +2,8 @@
 
 import { getCurrentUser, updateUserStats } from './auth.js';
 
+const PERF_KEY = 'cdr74_response_times';
+
 /**
  * Track game completion and update user stats (async)
  * @param {string} module - 'groessen' or 'deutsch'
@@ -21,6 +23,36 @@ export async function trackGameCompletion(module, score) {
   } catch (err) {
     console.error('Failed to update stats:', err);
     // Don't throw - graceful degradation
+  }
+}
+
+/**
+ * Record response time for a question (stored in localStorage per module)
+ * @param {string} module - Module name
+ * @param {number} ms - Time in milliseconds from question display to answer
+ */
+export function saveResponseTime(module, ms) {
+  if (!ms || ms <= 0 || ms > 300000) return; // ignore invalid / >5min
+  try {
+    const raw = localStorage.getItem(PERF_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    if (!data[module]) data[module] = { totalMs: 0, count: 0 };
+    data[module].totalMs += ms;
+    data[module].count += 1;
+    localStorage.setItem(PERF_KEY, JSON.stringify(data));
+  } catch (e) { /* ignore */ }
+}
+
+/**
+ * Get stored response time data per module
+ * @returns {Object} Map of module → { totalMs, count }
+ */
+export function getResponseTimes() {
+  try {
+    const raw = localStorage.getItem(PERF_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
   }
 }
 
