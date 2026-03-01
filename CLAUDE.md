@@ -41,6 +41,17 @@ statsTracker.saveResponseTime('deutsch-grammatik', elapsed);
 
 **Sprache:** UI und Kommentare auf Deutsch.
 
+## Skalierung erfordert ein Programm
+
+Jede Aufgabe, die Skalierung erfordert (N Einträge, M Varianten, K Schwierigkeitsstufen), darf **nicht** direkt durch einen Agenten gelöst werden. Stattdessen: ein Programm schreiben, das die Multiplikation erledigt.
+
+Beispiele für skalierbare Datenquellen:
+- Sätze nach Schwierigkeit sortieren → öffentliches Buch (Gutenberg) einlesen, Sätze filtern
+- Wortlisten → Wiktionary-Dump oder bestehende Korpora
+- Aufgaben generieren → Template + Zufallsparameter
+
+**Faustregel:** Wenn die Antwort "N × etwas" ist → erst das Programm, dann die Daten.
+
 ## Deployment
 
 - **Frontend:** Cloudflare Pages, automatisch bei Push auf `main`
