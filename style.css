@@ -469,6 +469,114 @@ select:focus, input:focus {
 .metric-bar-fill.medium { background: #FF9800; }
 .metric-bar-fill.bad    { background: #f44336; }
 
+/* Stats summary bar */
+.stats-summary {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.summary-stat {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid #e0e0e0;
+    min-width: 90px;
+    text-align: center;
+}
+
+.summary-value {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #333;
+    line-height: 1;
+}
+
+.summary-value.good   { color: #4CAF50; }
+.summary-value.medium { color: #FF9800; }
+.summary-value.bad    { color: #f44336; }
+
+.summary-label {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.25rem;
+}
+
+/* Stat card date label */
+.stat-date {
+    font-size: 0.82rem;
+    color: #888;
+    margin-top: 0.5rem !important;
+}
+
+/* Exercise rows (neue Übersicht) */
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.exercise-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: white;
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #e0e0e0;
+}
+
+.exercise-row-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 0.1rem;
+}
+
+.exercise-row-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.exercise-row-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.25rem;
+}
+
+.exercise-row-name {
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.exercise-row-count {
+    font-size: 0.82rem;
+    color: #555;
+    margin-left: auto;
+}
+
+.exercise-row-rate {
+    font-size: 0.82rem;
+    font-weight: bold;
+    padding: 0.1rem 0.45rem;
+    border-radius: 10px;
+    color: white;
+}
+
+.exercise-row-rate.good   { background: #4CAF50; }
+.exercise-row-rate.medium { background: #FF9800; }
+.exercise-row-rate.bad    { background: #f44336; }
+
+.exercise-row-meta {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.2rem;
+}
+
 /* Artikel exercise (der/die/das) */
 .artikel-options {
     display: flex;

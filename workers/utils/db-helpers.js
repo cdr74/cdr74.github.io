@@ -23,36 +23,24 @@ export async function getUserByUsername(db, username) {
 }
 
 /**
- * Get aggregate stats for a user
+ * Get aggregate stats for a user (computed directly from daily_activity)
  */
 export async function getUserStats(db, userId) {
   const stats = await db
     .prepare(`
       SELECT
         module,
-        total_played,
-        total_score,
-        last_played
-      FROM module_stats
+        SUM(games_played) as total_played,
+        SUM(total_score) as total_score,
+        MAX(last_updated) as last_played
+      FROM daily_activity
       WHERE user_id = ?
+      GROUP BY module
     `)
     .bind(userId)
     .all();
 
-  // Convert to object format
-  const statsObj = {
-    groessen: {
-      totalPlayed: 0,
-      totalScore: 0,
-      lastPlayed: null
-    },
-    deutsch: {
-      totalPlayed: 0,
-      totalScore: 0,
-      lastPlayed: null
-    }
-  };
-
+  const statsObj = {};
   for (const row of stats.results || []) {
     statsObj[row.module] = {
       totalPlayed: row.total_played,
@@ -101,9 +89,14 @@ export async function upsertDailyActivity(db, userId, module, score, timestamp) 
 }
 
 /**
- * Get daily activity for a user
+ * Get daily activity for a user within a date range
  */
 export async function getDailyActivityForUser(db, userId, module = null, days = 30) {
+  // Compute cutoff date in JS to avoid SQLite date string concatenation
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days + 1);
+  const cutoffDate = cutoff.toISOString().split('T')[0];
+
   let query;
   let params;
 
@@ -115,11 +108,10 @@ export async function getDailyActivityForUser(db, userId, module = null, days = 
         games_played as gamesPlayed,
         total_score as totalScore
       FROM daily_activity
-      WHERE user_id = ? AND module = ?
-      ORDER BY activity_date DESC
-      LIMIT ?
+      WHERE user_id = ? AND module = ? AND activity_date >= ?
+      ORDER BY activity_date ASC
     `;
-    params = [userId, module, days];
+    params = [userId, module, cutoffDate];
   } else {
     query = `
       SELECT
@@ -128,11 +120,10 @@ export async function getDailyActivityForUser(db, userId, module = null, days = 
         games_played as gamesPlayed,
         total_score as totalScore
       FROM daily_activity
-      WHERE user_id = ?
-      ORDER BY activity_date DESC
-      LIMIT ?
+      WHERE user_id = ? AND activity_date >= ?
+      ORDER BY activity_date ASC
     `;
-    params = [userId, days];
+    params = [userId, cutoffDate];
   }
 
   const result = await db.prepare(query).bind(...params).all();

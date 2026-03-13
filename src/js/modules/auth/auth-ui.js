@@ -7,7 +7,7 @@ import {
   logoutUser,
   getCurrentUser
 } from './auth.js';
-import { getDailyActivity } from '../api-client.js';
+import { getDailyActivity, getUser } from '../api-client.js';
 import { getResponseTimes } from './stats-tracker.js';
 
 const MODULE_CONFIG = {
@@ -153,7 +153,12 @@ export async function renderStatsScreen(container, user) {
   container.innerHTML = '<div class="loading">Lade Statistiken...</div>';
 
   try {
-    const { activity } = await getDailyActivity(user.username, { days: 30 });
+    // Frische Daten parallel laden
+    const [{ activity }, freshUser] = await Promise.all([
+      getDailyActivity(user.username, { days: 30 }),
+      getUser(user.username)
+    ]);
+    const userStats = freshUser.stats || {};
     const responseTimes = getResponseTimes();
 
     const formatDate = (timestamp) => {
@@ -161,10 +166,9 @@ export async function renderStatsScreen(container, user) {
       return new Date(timestamp).toLocaleDateString('de-DE');
     };
 
-    const calcErrorRate = (played, score) => {
+    const calcSuccessRate = (played, score) => {
       if (!played) return null;
-      const correct = score / 10;
-      return Math.round((1 - correct / played) * 100);
+      return Math.round(((score / 10) / played) * 100);
     };
 
     const formatAvgTime = (module) => {
@@ -173,7 +177,6 @@ export async function renderStatsScreen(container, user) {
       return (t.totalMs / t.count / 1000).toFixed(1) + 's';
     };
 
-    // Aggregate response time across multiple modules
     const aggregateAvgTime = (modules) => {
       let totalMs = 0, count = 0;
       modules.forEach(m => {
@@ -183,17 +186,25 @@ export async function renderStatsScreen(container, user) {
       return count > 0 ? (totalMs / count / 1000).toFixed(1) + 's' : null;
     };
 
-    // Grössen summary
-    const groessen = user.stats.groessen || { totalPlayed: 0, totalScore: 0, lastPlayed: null };
-    const groessenAvg = groessen.totalPlayed > 0 ? Math.round(groessen.totalScore / groessen.totalPlayed) : 0;
-    const groessenErrorRate = calcErrorRate(groessen.totalPlayed, groessen.totalScore);
+    // Gesamtübersicht
+    let totalAllPlayed = 0, totalAllScore = 0;
+    Object.values(userStats).forEach(s => {
+      totalAllPlayed += s.totalPlayed || 0;
+      totalAllScore += s.totalScore || 0;
+    });
+    const overallSuccessRate = calcSuccessRate(totalAllPlayed, totalAllScore);
+    const activeDays30 = new Set(activity.map(r => r.date)).size;
+
+    // Grössen
+    const groessen = userStats.groessen || { totalPlayed: 0, totalScore: 0, lastPlayed: null };
+    const groessenSuccessRate = calcSuccessRate(groessen.totalPlayed, groessen.totalScore);
     const groessenAvgTime = formatAvgTime('groessen');
 
-    // Deutsch summary — aggregate all deutsch and deutsch-* keys
-    const deutschStatKeys = Object.keys(user.stats || {}).filter(k => k === 'deutsch' || k.startsWith('deutsch-'));
+    // Deutsch — alle deutsch und deutsch-* Einträge zusammenfassen
+    const deutschStatKeys = Object.keys(userStats).filter(k => k === 'deutsch' || k.startsWith('deutsch-'));
     const deutsch = { totalPlayed: 0, totalScore: 0, lastPlayed: null };
     deutschStatKeys.forEach(k => {
-      const s = user.stats[k];
+      const s = userStats[k];
       if (s) {
         deutsch.totalPlayed += s.totalPlayed || 0;
         deutsch.totalScore += s.totalScore || 0;
@@ -202,12 +213,11 @@ export async function renderStatsScreen(container, user) {
         }
       }
     });
-    const deutschAvg = deutsch.totalPlayed > 0 ? Math.round(deutsch.totalScore / deutsch.totalPlayed) : 0;
-    const deutschErrorRate = calcErrorRate(deutsch.totalPlayed, deutsch.totalScore);
+    const deutschSuccessRate = calcSuccessRate(deutsch.totalPlayed, deutsch.totalScore);
     const deutschSubModules = ['deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel', 'deutsch-ordnen', 'deutsch-diktat', 'deutsch'];
     const deutschAvgTime = aggregateAvgTime(deutschSubModules);
 
-    // Per-exercise totals from the last 30 days of activity
+    // Summe pro Übung aus den letzten 30 Tagen
     const exerciseTotals = {};
     activity.forEach(row => {
       if (!exerciseTotals[row.module]) {
@@ -217,33 +227,50 @@ export async function renderStatsScreen(container, user) {
       exerciseTotals[row.module].totalScore += row.totalScore;
     });
 
+    const rateClass = (pct) => pct >= 80 ? 'good' : pct >= 50 ? 'medium' : 'bad';
+
     container.innerHTML = `
       <div class="stats-container">
         <h2>📊 Statistik: ${user.username}</h2>
 
+        ${overallSuccessRate !== null ? `
+          <div class="stats-summary">
+            <div class="summary-stat">
+              <div class="summary-value">${totalAllPlayed}</div>
+              <div class="summary-label">Versuche gesamt</div>
+            </div>
+            <div class="summary-stat">
+              <div class="summary-value ${rateClass(overallSuccessRate)}">${overallSuccessRate}%</div>
+              <div class="summary-label">Erfolgsquote</div>
+            </div>
+            <div class="summary-stat">
+              <div class="summary-value">${activeDays30}</div>
+              <div class="summary-label">Aktive Tage (30T)</div>
+            </div>
+          </div>
+        ` : ''}
+
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card" style="border-left: 5px solid #2196F3">
             <h3>📏 Grössen</h3>
             <p><strong>Versuche:</strong> ${groessen.totalPlayed}x</p>
-            <p><strong>Gesamt-Punkte:</strong> ${groessen.totalScore}</p>
-            ${groessenErrorRate !== null ? `
-              <p><strong>Fehlerquote:</strong> ${groessenErrorRate}%</p>
-              ${renderErrorBar(groessenErrorRate)}
+            ${groessenSuccessRate !== null ? `
+              <p><strong>Erfolgsquote:</strong> ${groessenSuccessRate}%</p>
+              ${renderSuccessBar(groessenSuccessRate)}
             ` : ''}
-            ${groessenAvgTime ? `<p><strong>Ø Antwortzeit:</strong> ${groessenAvgTime}</p>` : ''}
-            <p><strong>Zuletzt:</strong> ${formatDate(groessen.lastPlayed)}</p>
+            ${groessenAvgTime ? `<p><strong>Ø Zeit:</strong> ${groessenAvgTime}</p>` : ''}
+            <p class="stat-date">Zuletzt: ${formatDate(groessen.lastPlayed)}</p>
           </div>
 
-          <div class="stat-card">
+          <div class="stat-card" style="border-left: 5px solid #4CAF50">
             <h3>📝 Deutsch</h3>
             <p><strong>Versuche:</strong> ${deutsch.totalPlayed}x</p>
-            <p><strong>Gesamt-Punkte:</strong> ${deutsch.totalScore}</p>
-            ${deutschErrorRate !== null ? `
-              <p><strong>Fehlerquote:</strong> ${deutschErrorRate}%</p>
-              ${renderErrorBar(deutschErrorRate)}
+            ${deutschSuccessRate !== null ? `
+              <p><strong>Erfolgsquote:</strong> ${deutschSuccessRate}%</p>
+              ${renderSuccessBar(deutschSuccessRate)}
             ` : ''}
-            ${deutschAvgTime ? `<p><strong>Ø Antwortzeit:</strong> ${deutschAvgTime}</p>` : ''}
-            <p><strong>Zuletzt:</strong> ${formatDate(deutsch.lastPlayed)}</p>
+            ${deutschAvgTime ? `<p><strong>Ø Zeit:</strong> ${deutschAvgTime}</p>` : ''}
+            <p class="stat-date">Zuletzt: ${formatDate(deutsch.lastPlayed)}</p>
           </div>
         </div>
 
@@ -252,7 +279,7 @@ export async function renderStatsScreen(container, user) {
           ${renderActivityChart(activity)}
         </div>
 
-        ${renderExerciseBreakdown(user.stats, exerciseTotals)}
+        ${renderExerciseBreakdown(userStats, exerciseTotals)}
 
         <button class="btn secondary" id="close-stats">Zurück</button>
       </div>
@@ -360,9 +387,9 @@ function renderActivityChart(activity) {
   `;
 }
 
-function renderErrorBar(errorRate) {
-  const pct = Math.min(100, Math.max(0, errorRate));
-  const cls = pct < 20 ? 'good' : pct < 50 ? 'medium' : 'bad';
+function renderSuccessBar(successRate) {
+  const pct = Math.min(100, Math.max(0, successRate));
+  const cls = pct >= 80 ? 'good' : pct >= 50 ? 'medium' : 'bad';
   return `<div class="metric-bar"><div class="metric-bar-fill ${cls}" style="width:${pct}%"></div></div>`;
 }
 
@@ -377,36 +404,42 @@ function renderExerciseBreakdown(userStats, exerciseTotals30d) {
 
   const times = getResponseTimes();
 
-  const cards = EXERCISES.map(ex => {
+  const rows = EXERCISES.map(ex => {
     const allTime = userStats[ex.key] || { totalPlayed: 0, totalScore: 0 };
     const recent = exerciseTotals30d[ex.key] || { gamesPlayed: 0, totalScore: 0 };
     if (allTime.totalPlayed === 0 && recent.gamesPlayed === 0) return null;
 
-    const errorRate = allTime.totalPlayed > 0
-      ? Math.round((1 - (allTime.totalScore / 10) / allTime.totalPlayed) * 100)
+    const successRate = allTime.totalPlayed > 0
+      ? Math.round(((allTime.totalScore / 10) / allTime.totalPlayed) * 100)
       : null;
+    const rateClass = successRate !== null ? (successRate >= 80 ? 'good' : successRate >= 50 ? 'medium' : 'bad') : '';
     const t = times[ex.key];
     const avgTime = t && t.count > 0 ? (t.totalMs / t.count / 1000).toFixed(1) + 's' : null;
+    const recentLabel = recent.gamesPlayed > 0 ? `${recent.gamesPlayed}× letzte 30 Tage` : 'Zuletzt >30 Tage';
 
     return `
-      <div class="exercise-mini-card">
-        <div class="exercise-mini-dot" style="background:${ex.color}"></div>
-        <div class="exercise-mini-name">${ex.icon} ${ex.label}</div>
-        <div class="exercise-mini-stat">${allTime.totalPlayed}x versucht</div>
-        ${errorRate !== null ? `<div class="exercise-mini-error">Fehler: ${errorRate}%</div>` : ''}
-        ${avgTime ? `<div class="exercise-mini-time">Ø ${avgTime}</div>` : ''}
-        <div class="exercise-mini-secondary">${recent.gamesPlayed}x letzte 30T</div>
+      <div class="exercise-row">
+        <div class="exercise-row-icon" style="color:${ex.color}">${ex.icon}</div>
+        <div class="exercise-row-body">
+          <div class="exercise-row-head">
+            <span class="exercise-row-name">${ex.label}</span>
+            <span class="exercise-row-count">${allTime.totalPlayed}× gesamt</span>
+            ${successRate !== null ? `<span class="exercise-row-rate ${rateClass}">${successRate}%</span>` : ''}
+          </div>
+          ${successRate !== null ? renderSuccessBar(successRate) : ''}
+          <div class="exercise-row-meta">${recentLabel}${avgTime ? ` · Ø ${avgTime}` : ''}</div>
+        </div>
       </div>
     `;
   }).filter(Boolean);
 
-  if (cards.length === 0) return '';
+  if (rows.length === 0) return '';
 
   return `
     <div class="exercise-breakdown-section">
       <h3>📊 Deutsch — Details</h3>
-      <div class="exercise-breakdown-grid">
-        ${cards.join('')}
+      <div class="exercise-list">
+        ${rows.join('')}
       </div>
     </div>
   `;
