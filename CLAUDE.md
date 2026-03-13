@@ -37,7 +37,12 @@ statsTracker.saveResponseTime('deutsch-grammatik', elapsed);
 
 **Storage:** `sessionStorage` für die aktuelle User-Session (`cdr74_current_user`), `localStorage` für Antwortzeiten (`cdr74_response_times`), Cloudflare D1 für alle User- und Aktivitätsdaten.
 
-**Neue Deutsch-Sub-Übung hinzufügen:** Modulname in `workers/utils/validation.js` (`VALID_MODULES`) und in `auth/auth-ui.js` (`MODULE_CONFIG`, `MODULE_ORDER`) eintragen.
+**Neue Deutsch-Sub-Übung hinzufügen:**
+1. Modulname in `workers/utils/validation.js` (`VALID_MODULES`) eintragen
+2. Modulname in `auth/auth-ui.js` (`MODULE_CONFIG`, `MODULE_ORDER`) eintragen
+3. Worker deployen: `cd workers && wrangler deploy --env=""`
+4. DB-Migration: `module_check` Constraint in Remote-DB aktualisieren (siehe `workers/README.md` → "DB Migration")
+5. Ohne Schritt 3+4 werden Aktivitäten für das neue Modul nicht gespeichert (500-Fehler, stiller Datenverlust)
 
 **Sprache:** UI und Kommentare auf Deutsch.
 

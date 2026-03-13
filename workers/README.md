@@ -154,6 +154,34 @@ wrangler tail
 
 - `POST /api/session/login` - Login user
 
+## DB Migration
+
+SQLite unterstützt kein `ALTER TABLE DROP/MODIFY CONSTRAINT`. Bei Schema-Änderungen
+(z.B. neues Sub-Modul in `module_check`) muss die Tabelle neu erstellt werden.
+
+### Sub-Modul zu module_check hinzufügen (Remote)
+
+```bash
+# 1. Neue Tabelle mit aktualisiertem Schema erstellen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE TABLE daily_activity_new (...neues Schema...)"
+
+# 2. Daten kopieren
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="INSERT INTO daily_activity_new SELECT * FROM daily_activity"
+
+# 3. Falls vorhanden: module_stats VIEW droppen (blockiert Rename)
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP VIEW IF EXISTS module_stats"
+
+# 4. Alte Tabelle ersetzen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP TABLE daily_activity"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="ALTER TABLE daily_activity_new RENAME TO daily_activity"
+
+# 5. Indizes neu erstellen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_date ON daily_activity(user_id, activity_date DESC)"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_module ON daily_activity(user_id, module)"
+```
+
+Das vollständige aktuelle Schema steht in `schema.sql`.
+
 ## Troubleshooting
 
 ### Database not found
@@ -165,13 +193,16 @@ The worker includes CORS headers. If you still see errors, check that the API_BA
 ### Worker not deploying
 Run `wrangler whoami` to ensure you're logged in. Check that all files are valid JavaScript.
 
-### Schema errors
-If you need to reset the database:
-```bash
-# Drop all tables (be careful!)
-wrangler d1 execute cdr74-learning-db --command="DROP TABLE IF EXISTS daily_activity"
-wrangler d1 execute cdr74-learning-db --command="DROP TABLE IF EXISTS users"
+### Aktivitäten werden nicht gespeichert (500-Fehler)
+Mögliche Ursachen:
+1. **Worker nie deployed nach Codeänderungen** — immer `wrangler deploy --env=""` ausführen
+2. **module_check Constraint veraltet** — neues Sub-Modul wurde hinzugefügt aber DB nicht migriert → DB Migration (siehe oben)
+3. **Tabelle existiert nicht** — Schema wurde nie auf die Remote-DB angewendet → `wrangler d1 execute cdr74-learning-db --file=./schema.sql --env="" --remote`
 
-# Re-run schema
-wrangler d1 execute cdr74-learning-db --file=./schema.sql
+### Schema zurücksetzen (Notfall)
+```bash
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP VIEW IF EXISTS module_stats"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP TABLE IF EXISTS daily_activity"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP TABLE IF EXISTS users"
+wrangler d1 execute cdr74-learning-db --file=./schema.sql --env="" --remote
 ```

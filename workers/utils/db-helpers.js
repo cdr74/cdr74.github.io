@@ -66,7 +66,9 @@ export async function formatUserWithStats(db, user) {
 }
 
 /**
- * Record or update daily activity (SELECT+UPDATE/INSERT — funktioniert ohne UNIQUE-Constraint)
+ * Aktivität für einen Tag erfassen oder aktualisieren.
+ * Verwendet SELECT + UPDATE/INSERT statt ON CONFLICT, damit kein UNIQUE-Constraint
+ * auf der Tabelle vorausgesetzt wird (robuster bei DB-Migrationen).
  */
 export async function upsertDailyActivity(db, userId, module, score, timestamp) {
   const dateStr = getDateString(timestamp);

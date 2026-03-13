@@ -25,18 +25,9 @@ CREATE TABLE daily_activity (
 CREATE INDEX idx_daily_activity_user_date ON daily_activity(user_id, activity_date DESC);
 CREATE INDEX idx_daily_activity_user_module ON daily_activity(user_id, module);
 
--- Migration for existing databases (run if upgrading from earlier schema):
--- ALTER TABLE daily_activity DROP CONSTRAINT module_check;
--- (SQLite doesn't support DROP CONSTRAINT — recreate the table instead)
--- See workers/README.md for migration steps.
-
--- View for backward-compatible aggregate stats
-CREATE VIEW module_stats AS
-SELECT
-    user_id,
-    module,
-    SUM(games_played) as total_played,
-    SUM(total_score) as total_score,
-    MAX(last_updated) as last_played
-FROM daily_activity
-GROUP BY user_id, module;
+-- Migration für bestehende Datenbanken (z.B. neue Sub-Module hinzufügen):
+-- SQLite unterstützt kein ALTER TABLE DROP/MODIFY CONSTRAINT — Tabelle neu erstellen:
+-- Siehe workers/README.md → "DB Migration" für die vollständigen Schritte.
+--
+-- Hinweis: Das frühere module_stats VIEW wurde entfernt. Stats werden direkt
+-- aus daily_activity per GROUP BY aggregiert (siehe db-helpers.js getUserStats).
