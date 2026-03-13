@@ -66,26 +66,38 @@ export async function formatUserWithStats(db, user) {
 }
 
 /**
- * Record or update daily activity
+ * Record or update daily activity (SELECT+UPDATE/INSERT — funktioniert ohne UNIQUE-Constraint)
  */
 export async function upsertDailyActivity(db, userId, module, score, timestamp) {
   const dateStr = getDateString(timestamp);
 
-  // Use INSERT ... ON CONFLICT to upsert
-  const result = await db
-    .prepare(`
-      INSERT INTO daily_activity (user_id, activity_date, module, games_played, total_score, last_updated)
-      VALUES (?, ?, ?, 1, ?, ?)
-      ON CONFLICT(user_id, activity_date, module)
-      DO UPDATE SET
-        games_played = games_played + 1,
-        total_score = total_score + ?,
-        last_updated = ?
-    `)
-    .bind(userId, dateStr, module, score, timestamp, score, timestamp)
-    .run();
+  const existing = await db
+    .prepare('SELECT id FROM daily_activity WHERE user_id = ? AND activity_date = ? AND module = ?')
+    .bind(userId, dateStr, module)
+    .first();
 
-  return { success: result.success, date: dateStr };
+  if (existing) {
+    await db
+      .prepare(`
+        UPDATE daily_activity
+        SET games_played = games_played + 1,
+            total_score = total_score + ?,
+            last_updated = ?
+        WHERE id = ?
+      `)
+      .bind(score, timestamp, existing.id)
+      .run();
+  } else {
+    await db
+      .prepare(`
+        INSERT INTO daily_activity (user_id, activity_date, module, games_played, total_score, last_updated)
+        VALUES (?, ?, ?, 1, ?, ?)
+      `)
+      .bind(userId, dateStr, module, score, timestamp)
+      .run();
+  }
+
+  return { success: true, date: dateStr };
 }
 
 /**
