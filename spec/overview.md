@@ -1,31 +1,71 @@
-Projekt-Spezifikation — Übersicht
+# Projekt-Spezifikation — Übersicht
 
-- Ziele: Interaktive Lernübungen (Grössen, Deutsch, ...)
-- Modulare Architektur: `App.registerModule(name, module)`
-- Daten-getriebene Übungen: Wortlisten / Einheiten in `src/data`
-- Anforderungen: einfache Tests, CI, Deployment via Cloudflare Pages
- - Ziele: Interaktive, zugängliche Lernübungen (Grössen, Deutsch, ...)
- - Modulare Architektur: `App.registerModule(name, module)` — Module sollten eine kleine, testbare API (`init(dom)`, `start(...)`) bereitstellen.
- - Daten-getriebene Übungen: Wortlisten / Einheiten in `src/data` (JSON‑Fixtures als einzige Quelle für Inhalte)
- - Distribution vs. Source: Browser-ready entry scripts (`app.js`, `math.js`, `german.js`) live in the repo root; source modules live in `src/js/modules` (e.g. `german-core.js`). Consider a `dist/` folder for built artifacts in future.
- - Testing & CI: lightweight node tests in `tests/` validate core helpers. Add nyc and CI for coverage during refactors.
+## Ziel
 
-Mathematics module (Groessen)
-- Purpose: provide unit-conversion exercises (distance, area, volume) as an independent, testable module.
-- Public API: `init(dom)` — wire DOM controls (score, displays, input, buttons); `startGame(mode, difficulty)` — configure and start exercises.
-- Data model: units and conversion factors are defined in-module (or optionally loaded from `src/data/units.json` in future).
-- Behaviour and UX:
-	- On `startGame`, score resets to 0 and the first problem is generated.
-	- Problems present `value`, `unitFrom`, `unitTo` and accept numeric input (comma or dot accepted).
-	- `easy` difficulty presents neighbor-unit conversions (e.g., cm ↔ m) with whole-number-friendly values.
-	- `medium`/`hard` introduce non-trivial factors and decimal precision.
-	- Correct answer awards +10 points and shows success feedback; incorrect reveals formatted correct answer.
-- Acceptance criteria:
-	- Module exposes the API and registers with `App` via `App.registerModule('groessen', module)` when loaded.
-	- `generateProblem()` produces a valid numeric value and two different units within the selected mode.
-	- Answer checking tolerates small floating point differences (epsilon) and formats the displayed correct answer using localized decimal separator (comma).
-	- Unit tests cover conversion logic, problem generation boundaries, and UI-integration points using a mocked DOM.
+Deutschsprachige Lern-Web-App für Kinder: Grössen-Umrechnungen und Deutsch-Übungen (Grammatik, Lesen, Artikel, Wörter ordnen, Diktat).
 
-Migration notes:
-- When refactoring, extract pure logic (conversion factors, generateProblem, checkAnswer) into testable functions in `src/js/modules` and keep DOM glue small.
-- Add CI workflow that runs `npm test` and a coverage reporter to prevent regressions.
+## Technologie-Stack
+
+- **Frontend:** Vanilla JS, ESM-only, kein Framework, kein Bundler — Cloudflare Pages
+- **Backend:** Cloudflare Workers + D1 (SQLite) — REST-API für User- und Aktivitätsdaten
+- **Tests:** Node.js Unit-Tests mit c8-Coverage, Playwright Smoke-Tests
+- **Entry Point:** `main.js` — registriert alle Module und initialisiert Auth
+
+## Architektur
+
+### Module
+Module sind Factory Functions, die `statsTracker` per Dependency Injection erhalten:
+
+```javascript
+const modul = createModule({ statsTracker: statsTrackerApi });
+App.registerModule('modul-name', modul);
+```
+
+Aktive Module: `groessen`, `deutsch`, `deutsch-lesen`, `deutsch-artikel`, `deutsch-ordnen`, `deutsch-diktat`
+
+### Auth & Session
+- Benutzer werden über die Workers-API erstellt/eingeloggt
+- Aktive Session in `sessionStorage` (`cdr74_current_user`)
+- Login erforderlich, bevor Stats gespeichert werden (`requireLogin`)
+- Benutzerverwaltung: `src/js/modules/auth/auth.js`, `auth-ui.js`
+
+### Stats Tracking
+- Jede Antwort wird getrackt: richtig = Score 10, falsch = Score 0
+- Fehlerquote wird abgeleitet: `1 - totalScore / gamesPlayed / 10`
+- Antwortzeiten in `localStorage` (`cdr74_response_times`)
+- Aktivitätsdaten (aggregiert pro Tag/Modul) in Cloudflare D1
+- Stats-Anzeige: Gesamtübersicht, 30-Tage-Aktivitätschart, Deutsch-Detailaufschlüsselung
+
+### Backend (Cloudflare Workers)
+- Worker URL: `https://cdr74-learning-api.christian-raess.workers.dev`
+- DB-Schema: `workers/schema.sql`
+  - Tabelle `users`: `id`, `username`, `created_at`
+  - Tabelle `daily_activity`: aggregierte Tagesaktivität pro User/Modul
+- API-Endpunkte: Users (GET/POST/DELETE), Login, Activity (POST), Daily Activity (GET)
+- Validierung: `workers/utils/validation.js` — VALID_MODULES definiert erlaubte Modul-IDs
+
+## Datenquellen (`src/data/`)
+
+| Datei           | Wird verwendet von        |
+|-----------------|---------------------------|
+| `words.json`    | Grammatik-Übung           |
+| `texts.json`    | Lese-Übung                |
+| `artikel.json`  | Artikel-Übung             |
+| `saetze.json`   | Wörter-ordnen-Übung       |
+| `diktate.json`  | Diktat-Übung              |
+
+## Tests
+
+```bash
+npm test          # Unit-Tests + c8 Coverage
+npm run test:e2e  # Playwright Smoke-Tests
+npm run serve     # Dev-Server → http://localhost:8000
+```
+
+Unit-Tests in `tests/unit/`, Playwright-Tests in `tests/`. Coverage-Report in `coverage/`.
+
+## Deployment
+
+- **Frontend:** automatisch bei Push auf `main` (Cloudflare Pages)
+- **Backend:** `cd workers && wrangler deploy`
+- Setup & Migration: `workers/README.md`
