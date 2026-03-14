@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Session-Start
+
+Zu Beginn jeder neuen Konversation: Verfügbare Slash Commands kurz auflisten.
+
 ## Workflow
 
 After every code change:
