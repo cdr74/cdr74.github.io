@@ -12,12 +12,9 @@
 
 **Frontend:**
 ```bash
-# Tests ausführen
-npm test
-
-# Lokal entwickeln (kein Cache)
-npm run serve
-# → http://localhost:8000
+npm test           # Unit-Tests + Coverage
+npm run test:e2e   # Playwright Smoke-Tests (Chromium)
+npm run serve      # Lokal entwickeln → http://localhost:8000
 ```
 
 **Backend (Optional):**
@@ -48,7 +45,8 @@ Siehe `workers/README.md` für vollständige Backend-Setup-Anleitung.
   - `german-core.js`, `deutsch-lesen.js` - Deutsch-Logik
   - `deutsch-artikel.js`, `deutsch-ordnen.js`, `deutsch-diktat.js` - Schreiben-Module
 - `src/data/` - JSON-Daten (Wörter, Texte, Artikel, Sätze, Diktate)
-- `tests/` - Unit-Tests
+- `tests/unit/` - Unit-Tests (Node, c8)
+- `tests/e2e/` - Playwright Smoke-Tests (Chromium)
 
 **Backend (Cloudflare Workers):**
 - `workers/index.js` - Worker Entry Point, API Router
@@ -62,17 +60,24 @@ Siehe `workers/README.md` für vollständige Backend-Setup-Anleitung.
 ## 🧪 Tests
 
 ```bash
-npm test          # Alle Tests (empfohlen)
-npm run test:legacy  # Legacy Tests
+npm test           # Unit-Tests + c8 Coverage (schnell, kein Browser)
+npm run coverage   # Coverage-Bericht als HTML → coverage/index.html
+npm run test:e2e   # Playwright Smoke-Tests (21 Tests, ~8s, Chromium)
 ```
 
-**Test-Coverage:**
+**Unit-Tests** (`tests/unit/`) — pure Logik, läuft in Node:
 - ✅ german-core.js (normalizeType, filterWordpool, shuffle, filterByDifficulty)
 - ✅ deutsch-lesen.js (filterByDifficulty, pickTextPool, evaluateChoice)
 - ✅ deutsch-artikel.js (evaluateArtikel)
 - ✅ deutsch-ordnen.js (shuffleWords, evaluateSentence)
 - ✅ deutsch-diktat.js (getTimerDuration, evaluateDiktat)
-- ✅ auth.js (createUser, login, stats, delete)
+- ⚠️ auth.js (übersprungen — benötigt API-Backend)
+
+**E2E Smoke-Tests** (`tests/e2e/`) — echter Browser, fängt UI-Regressionen:
+- ✅ Seitenaufruf (Titel, Header, Startmenü)
+- ✅ Navigation (Grössen, Deutsch, Zurück-Button)
+- ✅ Alle 5 Deutsch-Übungsmodi starten korrekt
+- ✅ Redirect zu Login wenn kein Benutzer angemeldet
 
 ## 👤 Benutzer-System
 
@@ -145,6 +150,7 @@ npm run test:legacy  # Legacy Tests
 - [x] Schreiben-Übungen (Diktat, Wörter ordnen, Artikel der/die/das)
 - [x] Erweiterte Metriken (Fehlerquote, Zeit)
 - [x] Visualisierung der täglichen Aktivität (Charts)
+- [x] Playwright E2E Smoke-Tests (UI-Regression-Schutz)
 
 ## 🤝 Beitragen
 

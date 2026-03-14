@@ -13,7 +13,8 @@ After every code change:
 Deutschsprachige Lern-Web-App für Kinder: Grössen-Umrechnungen und Deutsch-Übungen (Grammatik, Lesen, Artikel, Wörter ordnen, Diktat). Vanilla JS, kein Framework, kein Bundler, Cloudflare Pages.
 
 ```bash
-npm test                   # Tests ausführen (immer nach Änderungen)
+npm test                   # Unit-Tests + c8 Coverage (immer nach Änderungen)
+npm run test:e2e           # Playwright Smoke-Tests — vor Commits ausführen
 npm run serve              # Lokaler Dev-Server → http://localhost:8000 (kein Cache)
 ```
 

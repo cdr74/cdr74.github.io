@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node tests/test-runner.js",
+    "test": "c8 node tests/test-runner.js",
     "test:legacy": "node tests/run-tests.js",
+    "coverage": "c8 --reporter=html node tests/test-runner.js",
+    "test:e2e": "playwright test",
     "serve": "npx http-server . --no-cache -p 8000 -c-1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "c8": "^11.0.0"
   }
 }
