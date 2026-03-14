@@ -14,9 +14,12 @@ Deutschsprachige Lern-Web-App für Kinder: Grössen-Umrechnungen und Deutsch-Üb
 
 ```bash
 npm test                   # Unit-Tests + c8 Coverage (immer nach Änderungen)
+npm run coverage           # HTML Coverage-Report → coverage/index.html
 npm run test:e2e           # Playwright Smoke-Tests — vor Commits ausführen
 npm run serve              # Lokaler Dev-Server → http://localhost:8000 (kein Cache)
 ```
+
+**WSL2-Hinweis:** `npx playwright test --headed` und `--ui` benötigen einen X-Server. Alternativ: `npx playwright test --ui` öffnet sich im Browser unter `http://localhost:8080` ohne X-Server.
 
 ## Architektur — wichtige Konventionen
 
@@ -57,6 +60,18 @@ Beispiele für skalierbare Datenquellen:
 - Aufgaben generieren → Template + Zufallsparameter
 
 **Faustregel:** Wenn die Antwort "N × etwas" ist → erst das Programm, dann die Daten.
+
+## Slash Commands
+
+Projekt-spezifische Befehle (verfügbar als `/command-name`):
+
+- `/new-modul <name>` — scaffoldet neues Deutsch-Sub-Übungsmodul (Datei, main.js, validation, auth-ui, Test, Spec)
+- `/test-full` — führt Unit-Tests + Coverage + Playwright E2E aus
+- `/deploy-worker` — begleitet Worker-Deployment mit Checkliste
+
+## Agents
+
+- `.github/agents/js-test-wizard.agent.md` — spezialisierter Agent zum Erstellen und Reparieren von Unit-Tests (`/run`, `/fix`, `/new`)
 
 ## Deployment
 
