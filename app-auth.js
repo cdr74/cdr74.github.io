@@ -11,9 +11,7 @@ export function initAuth(app) {
     const statsContent = document.getElementById('stats-content');
 
     function updateHeader() {
-        if (userInfoHeader) {
-            renderUserInfo(userInfoHeader);
-        }
+        renderUserInfo(userInfoHeader);
     }
 
     window.addEventListener('user:show-login', async () => {
@@ -28,9 +26,10 @@ export function initAuth(app) {
         app.showSection('start-menu');
     });
 
-    window.addEventListener('user:logout', () => {
+    window.addEventListener('user:logout', async () => {
         updateHeader();
-        app.showSection('start-menu');
+        app.showSection('login');
+        if (loginContent) await renderLoginScreen(loginContent);
     });
 
     window.addEventListener('user:show-stats', async (e) => {

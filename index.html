@@ -9,17 +9,23 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Online Übungen</h1>
-            <div id="user-info-header"></div>
+            <div class="header-bar">
+                <div id="user-greeting-slot"></div>
+                <div class="header-actions" id="header-actions">
+                    <button id="header-back-btn" class="btn small hidden">Zurück</button>
+                    <button id="header-stats-btn" class="btn small hidden">Statistik</button>
+                    <button id="header-logout-btn" class="btn small hidden">Abmelden</button>
+                    <button id="header-login-btn" class="btn small hidden">Anmelden</button>
+                </div>
+            </div>
         </header>
         
         <section id="start-menu" class="card">
-            <h2>Was möchtest du lernen?</h2>
             <div class="topics-grid">
                 <button id="btn-groessen" class="btn topic-card">Grössen</button>
                 <button id="btn-deutsch" class="btn topic-card">Deutsch</button>
@@ -29,7 +35,7 @@
         <section id="settings" class="card hidden">
             <h2>Einstellungen</h2>
             <div class="control-group">
-                <label for="mode">Was möchtest du üben?</label>
+                <label for="mode">Übung</label>
                 <select id="mode">
                     <option value="distance">Längen (mm, cm, dm, m, km)</option>
                     <option value="area">Flächen (mm², cm², dm², m²)</option>
@@ -46,14 +52,12 @@
             </div>
             <div class="control-group button-row">
                 <button id="start-btn" class="btn primary">Los geht's!</button>
-                <button id="settings-back" class="btn small">Zurück</button>
             </div>
         </section>
 
         <section id="game-area" class="card hidden">
             <div class="score-board">
                 <span>Punkte: <span id="score">0</span></span>
-                <button id="back-btn" class="btn small">Zurück</button>
             </div>
             
             <div class="problem-container">
@@ -75,7 +79,7 @@
             <h2>Deutsch — Einstieg</h2>
             <p>Wähle aus, was du üben möchtest und starte die Übung.</p>
             <div class="control-group">
-                <label for="deutsch-mode">Was möchtest du üben?</label>
+                <label for="deutsch-mode">Übung</label>
                 <select id="deutsch-mode">
                     <option value="grammar">Grammatik</option>
                     <option value="reading">Lesen</option>
@@ -95,9 +99,6 @@
             <div class="control-group">
                 <button id="deutsch-start" class="btn primary">Los geht's!</button>
             </div>
-            <div class="control-group">
-                <button id="deutsch-back" class="btn small">Zurück</button>
-            </div>
         </section>
 
         <section id="login" class="card hidden">
@@ -111,7 +112,6 @@
         <section id="deutsch-area" class="card hidden">
             <div class="score-board">
                 <span>Punkte: <span id="deutsch-score">0</span></span>
-                <button id="deutsch-exit" class="btn small">Zurück</button>
             </div>
             <div id="deutsch-content">
                 <h3 id="deutsch-title">Deutsch — Übung</h3>
@@ -119,39 +119,12 @@
             </div>
         </section>
     </div>
-    <!-- Cache-busting and ESM entry point -->
-    <script>
-        (async function(){
-            try {
-                // Development helper: clear all CacheStorage entries and unregister service workers
-                try {
-                    if ('caches' in window) {
-                        const keys = await caches.keys();
-                        await Promise.all(keys.map(k => caches.delete(k)));
-                        console.log('Cleared CacheStorage keys:', keys);
-                    }
-                } catch (cErr) {
-                    console.warn('Failed to clear CacheStorage', cErr);
-                }
-                try {
-                    if (navigator && navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
-                        const regs = await navigator.serviceWorker.getRegistrations();
-                        await Promise.all(regs.map(r => r.unregister()));
-                        console.log('Unregistered service workers:', regs.length);
-                    }
-                } catch (swErr) {
-                    console.warn('Failed to unregister service workers', swErr);
-                }
-
-                const v = Date.now();
-                // update CSS link with cache-busting
-                const css = document.querySelector('link[rel=stylesheet][href="style.css"]');
-                if (css) css.href = 'style.css?v=' + v;
-            } catch (e) {
-                console.error('cache-busting error', e);
-            }
-        })();
+    <!-- Cache-busting: add ?v=timestamp to all local assets so the browser fetches fresh JS/CSS -->
+    <script type="module">
+        const v = Date.now();
+        const css = document.querySelector('link[rel=stylesheet]');
+        if (css) css.href = 'style.css?v=' + v;
+        import('./main.js?v=' + v);
     </script>
-    <script type="module" src="main.js"></script>
 </body>
 </html>

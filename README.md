@@ -15,8 +15,8 @@
 # Tests ausführen
 npm test
 
-# Lokal entwickeln
-python -m http.server 8000
+# Lokal entwickeln (kein Cache)
+npm run serve
 # → http://localhost:8000
 ```
 

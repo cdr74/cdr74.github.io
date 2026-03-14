@@ -9,11 +9,17 @@ export const App = {
     },
     showSection(id) {
         const sections = ['start-menu','settings','game-area','deutsch','deutsch-area','login','stats'];
+        const homeScreens = ['start-menu', 'login', 'stats'];
         sections.forEach(s => {
             const el = document.getElementById(s);
             if (!el) return;
             if (s === id) el.classList.remove('hidden'); else el.classList.add('hidden');
         });
+        const backBtn = document.getElementById('header-back-btn');
+        if (backBtn) {
+            if (homeScreens.includes(id)) backBtn.classList.add('hidden');
+            else backBtn.classList.remove('hidden');
+        }
     },
     initDOM() {
         this.dom = {
@@ -42,7 +48,9 @@ export const App = {
             userInput: document.getElementById('user-input'),
             checkBtn: document.getElementById('check-btn'),
             nextBtn: document.getElementById('next-btn'),
-            feedbackDisplay: document.getElementById('feedback')
+            feedbackDisplay: document.getElementById('feedback'),
+            headerBackBtn:   document.getElementById('header-back-btn'),
+            headerLoginBtn:  document.getElementById('header-login-btn')
         };
     },
     attachNavHandlers() {
@@ -52,6 +60,8 @@ export const App = {
         if (d.deutschBackBtn) d.deutschBackBtn.addEventListener('click', () => this.showSection('start-menu'));
         if (d.settingsBackBtn) d.settingsBackBtn.addEventListener('click', () => this.showSection('start-menu'));
         if (d.backBtn) d.backBtn.addEventListener('click', () => this.showSection('start-menu'));
+        if (d.headerBackBtn) d.headerBackBtn.addEventListener('click', () => this.showSection('start-menu'));
+        if (d.headerLoginBtn) d.headerLoginBtn.addEventListener('click', () => window.dispatchEvent(new Event('user:show-login')));
         if (d.startBtn) d.startBtn.addEventListener('click', () => {
             const mode = (d.modeSelect && d.modeSelect.value) || 'distance';
             const difficulty = (d.difficultySelect && d.difficultySelect.value) || 'easy';

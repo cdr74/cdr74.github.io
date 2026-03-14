@@ -103,7 +103,7 @@ export function createModule(options = {}) {
 
         if (dom.feedbackDisplay) {
             dom.feedbackDisplay.classList.remove('hidden');
-            dom.feedbackDisplay.textContent = res.correct ? 'Richtig! 🎉' : `Falsch — richtig ist: ${res.expected}`;
+            dom.feedbackDisplay.textContent = res.correct ? 'Richtig!' : `Falsch — richtig ist: ${res.expected}`;
             dom.feedbackDisplay.className = res.correct ? 'feedback correct' : 'feedback incorrect';
         }
         if (res.correct) {

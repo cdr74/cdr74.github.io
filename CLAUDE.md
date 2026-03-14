@@ -5,7 +5,7 @@
 After every code change:
 1. **Specs & README aktualisieren** — alle betroffenen `spec/*.md`, `README.md` und dieses File auf dem neuesten Stand halten
 2. **Tests ausführen und Ergebnis zeigen** — immer `npm test` ausführen und das Ergebnis im Chat anzeigen
-3. Lokaler explorativer Test durch den User (`python -m http.server 8000`)
+3. Lokaler explorativer Test durch den User (`npm run serve`)
 4. Commit & Deployment durch den User
 
 ## Projekt
@@ -14,7 +14,7 @@ Deutschsprachige Lern-Web-App für Kinder: Grössen-Umrechnungen und Deutsch-Üb
 
 ```bash
 npm test                   # Tests ausführen (immer nach Änderungen)
-python -m http.server 8000 # Lokaler Dev-Server → http://localhost:8000
+npm run serve              # Lokaler Dev-Server → http://localhost:8000 (kein Cache)
 ```
 
 ## Architektur — wichtige Konventionen

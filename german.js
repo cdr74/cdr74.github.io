@@ -140,7 +140,7 @@ export function createDeutschModule(dependencies = {}) {
                 });
             }
 
-            if (feedback) { feedback.textContent = 'Richtig! 🎉'; feedback.className = 'feedback correct'; }
+            if (feedback) { feedback.textContent = 'Richtig!'; feedback.className = 'feedback correct'; }
         } else {
             if (feedback) { feedback.textContent = `Falsch — richtig wäre: ${typeLabel(q.type)}`; feedback.className = 'feedback incorrect'; }
 

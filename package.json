@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node tests/test-runner.js",
-    "test:legacy": "node tests/run-tests.js"
+    "test:legacy": "node tests/run-tests.js",
+    "serve": "npx http-server . --no-cache -p 8000 -c-1"
   }
 }

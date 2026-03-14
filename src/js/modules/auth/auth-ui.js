@@ -11,13 +11,13 @@ import { getDailyActivity, getUser } from '../api-client.js';
 import { getResponseTimes } from './stats-tracker.js';
 
 const MODULE_CONFIG = {
-  'groessen':          { label: 'Grössen',   color: '#2196F3', icon: '📏' },
-  'deutsch-grammatik': { label: 'Grammatik', color: '#4CAF50', icon: '📝' },
-  'deutsch-lesen':     { label: 'Lesen',     color: '#FF9800', icon: '📖' },
-  'deutsch-artikel':   { label: 'Artikel',   color: '#9C27B0', icon: '🔤' },
-  'deutsch-ordnen':    { label: 'Ordnen',    color: '#F44336', icon: '🔀' },
-  'deutsch-diktat':    { label: 'Diktat',    color: '#009688', icon: '✏️' },
-  'deutsch':           { label: 'Deutsch',   color: '#757575', icon: '📝' },
+  'groessen':          { label: 'Grössen',   color: '#60a5fa' },
+  'deutsch-grammatik': { label: 'Grammatik', color: '#4ade80' },
+  'deutsch-lesen':     { label: 'Lesen',     color: '#fb923c' },
+  'deutsch-artikel':   { label: 'Artikel',   color: '#c084fc' },
+  'deutsch-ordnen':    { label: 'Ordnen',    color: '#f87171' },
+  'deutsch-diktat':    { label: 'Diktat',    color: '#2dd4bf' },
+  'deutsch':           { label: 'Deutsch',   color: '#94a3b8' },
 };
 
 const MODULE_ORDER = ['groessen', 'deutsch-grammatik', 'deutsch-lesen', 'deutsch-artikel', 'deutsch-ordnen', 'deutsch-diktat', 'deutsch'];
@@ -30,7 +30,7 @@ export async function renderLoginScreen(container) {
 
     container.innerHTML = `
       <div class="auth-container">
-        <h2>👤 Benutzer wählen</h2>
+        <h2>Benutzer wählen</h2>
 
         ${users.length > 0 ? `
           <div class="user-list">
@@ -111,41 +111,39 @@ export async function renderLoginScreen(container) {
   }
 }
 
-export function renderUserInfo(container) {
+export function renderUserInfo(_container) {
   const user = getCurrentUser();
 
+  const greetingSlot = document.getElementById('user-greeting-slot');
+  const loginBtn     = document.getElementById('header-login-btn');
+  const statsBtn     = document.getElementById('header-stats-btn');
+  const logoutBtn    = document.getElementById('header-logout-btn');
+
   if (!user) {
-    container.innerHTML = '<button class="btn small" id="show-login">Anmelden</button>';
-    const btn = container.querySelector('#show-login');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        window.dispatchEvent(new Event('user:show-login'));
-      });
+    if (greetingSlot) greetingSlot.innerHTML = '';
+    if (loginBtn)  loginBtn.classList.remove('hidden');
+    if (statsBtn)  statsBtn.classList.add('hidden');
+    if (logoutBtn) logoutBtn.classList.add('hidden');
+
+    if (loginBtn) {
+      loginBtn.onclick = () => window.dispatchEvent(new Event('user:show-login'));
     }
     return;
   }
 
-  container.innerHTML = `
-    <div class="user-info">
-      <span class="user-name">👤 ${user.username}</span>
-      <button class="btn small" id="show-stats">Statistik</button>
-      <button class="btn small" id="logout-btn">Abmelden</button>
-    </div>
-  `;
+  if (greetingSlot) greetingSlot.innerHTML = `<h1 class="user-greeting">Hallo, ${user.username}</h1>`;
+  if (loginBtn)  loginBtn.classList.add('hidden');
+  if (statsBtn)  statsBtn.classList.remove('hidden');
+  if (logoutBtn) logoutBtn.classList.remove('hidden');
 
-  const logoutBtn = container.querySelector('#logout-btn');
+  if (statsBtn) {
+    statsBtn.onclick = () => window.dispatchEvent(new CustomEvent('user:show-stats', { detail: { user } }));
+  }
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
+    logoutBtn.onclick = () => {
       logoutUser();
       window.dispatchEvent(new Event('user:logout'));
-    });
-  }
-
-  const statsBtn = container.querySelector('#show-stats');
-  if (statsBtn) {
-    statsBtn.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('user:show-stats', { detail: { user } }));
-    });
+    };
   }
 }
 
@@ -231,7 +229,7 @@ export async function renderStatsScreen(container, user) {
 
     container.innerHTML = `
       <div class="stats-container">
-        <h2>📊 Statistik: ${user.username}</h2>
+        <h2>Statistik: ${user.username}</h2>
 
         ${overallSuccessRate !== null ? `
           <div class="stats-summary">
@@ -251,8 +249,8 @@ export async function renderStatsScreen(container, user) {
         ` : ''}
 
         <div class="stats-grid">
-          <div class="stat-card" style="border-left: 5px solid #2196F3">
-            <h3>📏 Grössen</h3>
+          <div class="stat-card" style="border-left: 3px solid #60a5fa">
+            <h3>Grössen</h3>
             <p><strong>Versuche:</strong> ${groessen.totalPlayed}x</p>
             ${groessenSuccessRate !== null ? `
               <p><strong>Erfolgsquote:</strong> ${groessenSuccessRate}%</p>
@@ -262,8 +260,8 @@ export async function renderStatsScreen(container, user) {
             <p class="stat-date">Zuletzt: ${formatDate(groessen.lastPlayed)}</p>
           </div>
 
-          <div class="stat-card" style="border-left: 5px solid #4CAF50">
-            <h3>📝 Deutsch</h3>
+          <div class="stat-card" style="border-left: 3px solid #4ade80">
+            <h3>Deutsch</h3>
             <p><strong>Versuche:</strong> ${deutsch.totalPlayed}x</p>
             ${deutschSuccessRate !== null ? `
               <p><strong>Erfolgsquote:</strong> ${deutschSuccessRate}%</p>
@@ -275,7 +273,7 @@ export async function renderStatsScreen(container, user) {
         </div>
 
         <div class="daily-activity-section">
-          <h3>📅 Aktivität letzte 30 Tage</h3>
+          <h3>Aktivität letzte 30 Tage</h3>
           ${renderActivityChart(activity)}
         </div>
 
@@ -373,13 +371,13 @@ function renderActivityChart(activity) {
 
   const legendHtml = activeModules.map(mod => {
     const cfg = MODULE_CONFIG[mod] || { color: '#ccc', label: mod, icon: '' };
-    return `<span class="legend-item"><span class="legend-dot" style="background:${cfg.color}"></span>${cfg.icon} ${cfg.label}</span>`;
+    return `<span class="legend-item"><span class="legend-dot" style="background:${cfg.color}"></span>${cfg.label}</span>`;
   }).join('');
 
   return `
     <div class="activity-chart-container">
       <svg viewBox="0 0 ${svgW} ${svgH}" width="100%" xmlns="http://www.w3.org/2000/svg">
-        <line x1="${startX}" y1="${chartBottom}" x2="${svgW - startX}" y2="${chartBottom}" stroke="#e0e0e0" stroke-width="1"/>
+        <line x1="${startX}" y1="${chartBottom}" x2="${svgW - startX}" y2="${chartBottom}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
         ${bars}
       </svg>
       <div class="chart-legend">${legendHtml}</div>
@@ -395,11 +393,11 @@ function renderSuccessBar(successRate) {
 
 function renderExerciseBreakdown(userStats, exerciseTotals30d) {
   const EXERCISES = [
-    { key: 'deutsch-grammatik', label: 'Grammatik', icon: '📝', color: '#4CAF50' },
-    { key: 'deutsch-lesen',     label: 'Lesen',     icon: '📖', color: '#FF9800' },
-    { key: 'deutsch-artikel',   label: 'Artikel',   icon: '🔤', color: '#9C27B0' },
-    { key: 'deutsch-ordnen',    label: 'Ordnen',    icon: '🔀', color: '#F44336' },
-    { key: 'deutsch-diktat',    label: 'Diktat',    icon: '✏️', color: '#009688' },
+    { key: 'deutsch-grammatik', label: 'Grammatik', color: '#4ade80' },
+    { key: 'deutsch-lesen',     label: 'Lesen',     color: '#fb923c' },
+    { key: 'deutsch-artikel',   label: 'Artikel',   color: '#c084fc' },
+    { key: 'deutsch-ordnen',    label: 'Ordnen',    color: '#f87171' },
+    { key: 'deutsch-diktat',    label: 'Diktat',    color: '#2dd4bf' },
   ];
 
   const times = getResponseTimes();
@@ -418,8 +416,7 @@ function renderExerciseBreakdown(userStats, exerciseTotals30d) {
     const recentLabel = recent.gamesPlayed > 0 ? `${recent.gamesPlayed}× letzte 30 Tage` : 'Zuletzt >30 Tage';
 
     return `
-      <div class="exercise-row">
-        <div class="exercise-row-icon" style="color:${ex.color}">${ex.icon}</div>
+      <div class="exercise-row" style="border-left-color:${ex.color}">
         <div class="exercise-row-body">
           <div class="exercise-row-head">
             <span class="exercise-row-name">${ex.label}</span>
@@ -437,7 +434,7 @@ function renderExerciseBreakdown(userStats, exerciseTotals30d) {
 
   return `
     <div class="exercise-breakdown-section">
-      <h3>📊 Deutsch — Details</h3>
+      <h3>Deutsch — Details</h3>
       <div class="exercise-list">
         ${rows.join('')}
       </div>

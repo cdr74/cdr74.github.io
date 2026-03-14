@@ -103,7 +103,7 @@ export function createGroessenModule(dependencies = {}) {
         const elapsed = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
 
         if (isCorrect) {
-            if (d.feedbackDisplay) { d.feedbackDisplay.textContent = "Richtig! Super gemacht! 🎉"; d.feedbackDisplay.classList.add('correct'); }
+            if (d.feedbackDisplay) { d.feedbackDisplay.textContent = "Richtig!"; d.feedbackDisplay.classList.add('correct'); }
             state.currentScore += 10; updateScore();
 
             // Track stats (non-blocking)
