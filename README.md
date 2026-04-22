@@ -5,7 +5,7 @@
 - **Grössen-Übungen:** Einheiten-Umrechnung (Längen, Flächen, Volumen)
 - **Deutsch-Übungen:** Grammatik, Leseverständnis, Schreiben (Diktat, Wörter ordnen, Artikel)
 - **Benutzer-System:** Cloud-basiertes Login, Statistik-Tracking mit Cloudflare D1
-- **Tägliche Aktivitäts-Verfolgung:** Aggregierte Statistiken pro Tag und Modul
+- **Tägliche Aktivitäts-Verfolgung:** Aggregierte Statistiken pro Tag, Modul und Schwierigkeitsgrad
 - **Modulare Architektur:** Testbare, erweiterbare Komponenten (Pure ESM)
 
 ## 🚀 Schnellstart
@@ -88,17 +88,17 @@ npm run test:e2e   # Playwright Smoke-Tests (21 Tests, ~8s, Chromium)
 - **Tägliche Aktivitäts-Aggregation** - Effiziente Speicherung pro Tag/Modul
 
 **Statistiken:**
-- Anzahl gespielter Sessions (pro Tag/Modul aggregiert)
-- Gesamt-Punkte
-- Durchschnittliche Punktzahl
+- Anzahl gespielter Sessions (pro Tag/Modul/Schwierigkeitsgrad aggregiert)
+- Gesamt-Punkte und Erfolgsquote
 - Letzte Aktivität
-- 30-Tage Aktivitäts-Historie
+- 30-Tage Aktivitäts-Histogramm
+- Aufschlüsselung nach Schwierigkeitsgrad (Leicht/Mittel/Schwer) pro Übung
 
 **API Endpoints:**
 - `POST /api/users` - User erstellen
 - `POST /api/session/login` - Login
-- `GET /api/users/:username` - User + Stats abrufen
-- `POST /api/users/:username/activity` - Aktivität aufzeichnen
+- `GET /api/users/:username` - User + Stats abrufen (inkl. `byDifficulty` pro Modul)
+- `POST /api/users/:username/activity` - Aktivität aufzeichnen (`{ module, score, timestamp, difficulty }`)
 - `GET /api/users/:username/daily-activity` - Tägliche Aktivität abrufen
 - `DELETE /api/users/:username` - User löschen
 
@@ -151,6 +151,7 @@ npm run test:e2e   # Playwright Smoke-Tests (21 Tests, ~8s, Chromium)
 - [x] Erweiterte Metriken (Fehlerquote, Zeit)
 - [x] Visualisierung der täglichen Aktivität (Charts)
 - [x] Playwright E2E Smoke-Tests (UI-Regression-Schutz)
+- [x] Schwierigkeitsgrad-Tracking pro Übung (Leicht/Mittel/Schwer-Aufschlüsselung in Stats)
 
 ## 🤝 Beitragen
 

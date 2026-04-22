@@ -39,6 +39,10 @@ Multiple-Choice Leseverständnis-Übungen mit kurzen Texten. Datengetrieben, kla
 
 ## Testanforderungen
 
+## Stats-Tracking
+
+Nach jeder Antwort wird `statsTracker.trackGameCompletion('deutsch-lesen', score, state.currentDifficulty)` aufgerufen. `state.currentDifficulty` wird in `start(mode, difficulty)` gesetzt.
+
 - `filterByDifficulty` gibt nur passende Einträge zurück
 - `evaluateChoice` liefert `true` bei korrekter Indexwahl, `false` sonst
 - Mock `fetch('src/data/texts.json')` und teste `start(difficulty)` flow: render → answer → score update → next

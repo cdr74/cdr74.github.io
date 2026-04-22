@@ -38,6 +38,12 @@ Einheiten als interne Liste von `{ name, factor }` (Faktor relativ zur Basiseinh
 
 ## Testanforderungen
 
+## Stats-Tracking
+
+Nach jeder Antwort wird `statsTracker.trackGameCompletion('groessen', score, state.currentDifficulty)` aufgerufen:
+- `score`: 10 (richtig) oder 0 (falsch)
+- `state.currentDifficulty`: wird in `startGame(mode, difficulty)` gesetzt und bleibt für die Runde konstant
+
 - Konversion: `convert(value, fromFactor, toFactor)` — mathematische Korrektheit
 - `generateProblem()` — Einheitenauswahl und Wertebereiche pro Difficulty
 - `checkAnswer()` — kommastellige Eingaben, Rundungsfehler

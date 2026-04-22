@@ -57,3 +57,12 @@ Alle IDs müssen in `workers/utils/validation.js` (`VALID_MODULES`) und `auth/au
 | Artikel        | `deutsch-artikel`   |
 | Wörter ordnen  | `deutsch-ordnen`    |
 | Diktat         | `deutsch-diktat`    |
+## Stats-Tracking
+
+Jede Übungs-Antwort ruft `statsTracker.trackGameCompletion(module, score, difficulty)` auf:
+- `module`: z.B. `'deutsch-grammatik'`, `'deutsch-artikel'`, `'deutsch-lesen'`, `'deutsch-ordnen'`, `'deutsch-diktat'`
+- `score`: 10 (richtig) oder 0 (falsch)
+- `difficulty`: `state.difficulty` (Grammatik) bzw. `state.currentDifficulty` (alle anderen) — entspricht dem beim `start(mode, difficulty)`-Aufruf gesetzten Wert
+
+Die Difficulty wird im Modul-State gespeichert und bleibt für die gesamte Spielrunde konstant.
+

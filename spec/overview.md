@@ -33,7 +33,10 @@ Aktive Module: `groessen`, `deutsch`, `deutsch-lesen`, `deutsch-artikel`, `deuts
 - Jede Antwort wird getrackt: richtig = Score 10, falsch = Score 0
 - Fehlerquote wird abgeleitet: `1 - totalScore / gamesPlayed / 10`
 - Antwortzeiten in `localStorage` (`cdr74_response_times`)
-- Aktivitätsdaten (aggregiert pro Tag/Modul) in Cloudflare D1
+- Aktivitätsdaten (aggregiert pro Tag/Modul/Schwierigkeitsgrad) in Cloudflare D1
+- `trackGameCompletion(module, score, difficulty)` — Difficulty wird pro Antwort mitgespeichert
+- `getUserStats` liefert `byDifficulty: { easy, medium, hard }` pro Modul
+- Stats-UI zeigt Leicht/Mittel/Schwer-Aufschlüsselung pro Übung
 - Stats-Anzeige: Gesamtübersicht, 30-Tage-Aktivitätschart, Deutsch-Detailaufschlüsselung
 
 ### Backend (Cloudflare Workers)
