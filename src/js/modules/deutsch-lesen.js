@@ -97,13 +97,13 @@ export function createModule(options = {}) {
     if (res.correct) {
       state.score += 10;
       if (statsTracker && statsTracker.trackGameCompletion) {
-        statsTracker.trackGameCompletion('deutsch-lesen', 10).catch(err => {
+        statsTracker.trackGameCompletion('deutsch-lesen', 10, state.currentDifficulty).catch(err => {
           console.error('Stats tracking failed:', err);
         });
       }
     } else {
       if (statsTracker && statsTracker.trackGameCompletion) {
-        statsTracker.trackGameCompletion('deutsch-lesen', 0).catch(err => {
+        statsTracker.trackGameCompletion('deutsch-lesen', 0, state.currentDifficulty).catch(err => {
           console.error('Stats tracking failed:', err);
         });
       }

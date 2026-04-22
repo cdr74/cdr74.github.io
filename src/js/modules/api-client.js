@@ -150,12 +150,13 @@ export async function loginUser(username) {
  * @param {string} module - Module name ('groessen' or 'deutsch')
  * @param {number} score - Points scored
  * @param {number} timestamp - Optional timestamp (defaults to now)
+ * @param {string} difficulty - 'easy', 'medium', or 'hard'
  * @returns {Promise<Object>} Success response with date
  */
-export async function recordActivity(username, module, score, timestamp = Date.now()) {
+export async function recordActivity(username, module, score, timestamp = Date.now(), difficulty = 'unknown') {
   return apiRequest(`/users/${encodeURIComponent(username)}/activity`, {
     method: 'POST',
-    body: JSON.stringify({ module, score, timestamp })
+    body: JSON.stringify({ module, score, timestamp, difficulty })
   });
 }
 

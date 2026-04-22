@@ -6,10 +6,11 @@ const PERF_KEY = 'cdr74_response_times';
 
 /**
  * Track game completion and update user stats (async)
- * @param {string} module - 'groessen' or 'deutsch'
- * @param {number} score - Points earned in this session
+ * @param {string} module - e.g. 'groessen', 'deutsch-artikel'
+ * @param {number} score - Points earned (10 = correct, 0 = wrong)
+ * @param {string} difficulty - 'easy', 'medium', or 'hard'
  */
-export async function trackGameCompletion(module, score) {
+export async function trackGameCompletion(module, score, difficulty = 'unknown') {
   const user = getCurrentUser();
 
   if (!user) {
@@ -18,8 +19,8 @@ export async function trackGameCompletion(module, score) {
   }
 
   try {
-    await updateUserStats(user.username, module, score);
-    console.log(`Stats updated for ${user.username}: ${module} +${score}`);
+    await updateUserStats(user.username, module, score, difficulty);
+    console.log(`Stats updated for ${user.username}: ${module}/${difficulty} +${score}`);
   } catch (err) {
     console.error('Failed to update stats:', err);
     // Don't throw - graceful degradation

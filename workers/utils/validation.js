@@ -58,6 +58,16 @@ export function validateTimestamp(timestamp) {
   return { valid: true, timestamp };
 }
 
+const VALID_DIFFICULTIES = ['easy', 'medium', 'hard', 'unknown'];
+
+export function validateDifficulty(difficulty) {
+  if (!difficulty || typeof difficulty !== 'string') {
+    return { valid: true, difficulty: 'unknown' };
+  }
+  const lower = difficulty.toLowerCase();
+  return { valid: true, difficulty: VALID_DIFFICULTIES.includes(lower) ? lower : 'unknown' };
+}
+
 export function validateDays(days) {
   if (days === undefined || days === null) {
     return { valid: true, days: 30 }; // Default

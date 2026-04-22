@@ -2,7 +2,7 @@
  * Activity tracking operations
  */
 
-import { validateModule, validateScore, validateTimestamp, validateDays } from '../utils/validation.js';
+import { validateModule, validateScore, validateTimestamp, validateDays, validateDifficulty } from '../utils/validation.js';
 import { getUserByUsername, upsertDailyActivity, getDailyActivityForUser } from '../utils/db-helpers.js';
 
 /**
@@ -46,13 +46,16 @@ export async function recordActivity(username, request, db) {
     };
   }
 
+  const { difficulty } = validateDifficulty(body.difficulty);
+
   try {
     const result = await upsertDailyActivity(
       db,
       user.id,
       moduleValidation.module,
       scoreValidation.score,
-      timestampValidation.timestamp
+      timestampValidation.timestamp,
+      difficulty
     );
 
     return {

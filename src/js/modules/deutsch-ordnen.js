@@ -14,7 +14,7 @@ export function evaluateSentence(assembled, correct) {
 export function createModule(options = {}) {
     const { statsTracker } = options;
     let dom = null;
-    let state = { items: [], pool: [], index: 0, score: 0, total: 10, assembled: [], shuffled: [], questionStartTime: null };
+    let state = { items: [], pool: [], index: 0, score: 0, total: 10, currentDifficulty: 'easy', assembled: [], shuffled: [], questionStartTime: null };
 
     async function loadItems() {
         if (Array.isArray(state.items) && state.items.length) return state.items;
@@ -109,11 +109,11 @@ export function createModule(options = {}) {
         if (res.correct) {
             state.score += 10;
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-ordnen', 10).catch(err => console.error('Stats tracking failed:', err));
+                statsTracker.trackGameCompletion('deutsch-ordnen', 10, state.currentDifficulty).catch(err => console.error('Stats tracking failed:', err));
             }
         } else {
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-ordnen', 0).catch(err => console.error('Stats tracking failed:', err));
+                statsTracker.trackGameCompletion('deutsch-ordnen', 0, state.currentDifficulty).catch(err => console.error('Stats tracking failed:', err));
             }
         }
         if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {
@@ -132,6 +132,7 @@ export function createModule(options = {}) {
         },
         async start(mode, difficulty) {
             state.score = 0; state.index = 0; state.assembled = []; state.shuffled = [];
+            state.currentDifficulty = difficulty || 'easy';
             if (dom && dom.scoreDisplay) dom.scoreDisplay.textContent = '0';
             await loadItems();
             const filtered = filterByDifficulty(state.items, difficulty);

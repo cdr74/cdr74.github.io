@@ -108,7 +108,7 @@ export function createGroessenModule(dependencies = {}) {
 
             // Track stats (non-blocking)
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('groessen', 10).catch(err => {
+                statsTracker.trackGameCompletion('groessen', 10, state.currentDifficulty).catch(err => {
                     console.error('Stats tracking failed:', err);
                 });
             }
@@ -122,7 +122,7 @@ export function createGroessenModule(dependencies = {}) {
 
             // Track wrong answer
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('groessen', 0).catch(err => {
+                statsTracker.trackGameCompletion('groessen', 0, state.currentDifficulty).catch(err => {
                     console.error('Stats tracking failed:', err);
                 });
             }

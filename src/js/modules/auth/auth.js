@@ -113,9 +113,9 @@ export function logoutUser() {
 /**
  * Update user stats (record game completion)
  */
-export async function updateUserStats(username, module, scoreIncrement) {
+export async function updateUserStats(username, module, scoreIncrement, difficulty = 'unknown') {
   try {
-    await api.recordActivity(username, module, scoreIncrement, Date.now());
+    await api.recordActivity(username, module, scoreIncrement, Date.now(), difficulty);
 
     // Refresh current user stats if logged in
     const current = getCurrentUser();

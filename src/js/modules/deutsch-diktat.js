@@ -91,11 +91,11 @@ export function createModule(options = {}) {
         if (res.correct) {
             state.score += 10;
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-diktat', 10).catch(err => console.error('Stats tracking failed:', err));
+                statsTracker.trackGameCompletion('deutsch-diktat', 10, state.currentDifficulty).catch(err => console.error('Stats tracking failed:', err));
             }
         } else {
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-diktat', 0).catch(err => console.error('Stats tracking failed:', err));
+                statsTracker.trackGameCompletion('deutsch-diktat', 0, state.currentDifficulty).catch(err => console.error('Stats tracking failed:', err));
             }
         }
         if (elapsed > 0 && statsTracker && statsTracker.saveResponseTime) {

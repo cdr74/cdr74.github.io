@@ -23,11 +23,12 @@ export async function getUserByUsername(db, username) {
 }
 
 /**
- * Get aggregate stats for a user (computed directly from daily_activity)
+ * Get aggregate stats for a user (computed directly from daily_activity).
+ * Returns per-module totals plus a byDifficulty breakdown.
  */
 export async function getUserStats(db, userId) {
-  const stats = await db
-    .prepare(`
+  const [moduleRows, diffRows] = await Promise.all([
+    db.prepare(`
       SELECT
         module,
         SUM(games_played) as total_played,
@@ -36,16 +37,34 @@ export async function getUserStats(db, userId) {
       FROM daily_activity
       WHERE user_id = ?
       GROUP BY module
-    `)
-    .bind(userId)
-    .all();
+    `).bind(userId).all(),
+    db.prepare(`
+      SELECT
+        module,
+        difficulty,
+        SUM(games_played) as total_played,
+        SUM(total_score) as total_score
+      FROM daily_activity
+      WHERE user_id = ?
+      GROUP BY module, difficulty
+    `).bind(userId).all(),
+  ]);
 
   const statsObj = {};
-  for (const row of stats.results || []) {
+  for (const row of moduleRows.results || []) {
     statsObj[row.module] = {
       totalPlayed: row.total_played,
       totalScore: row.total_score,
-      lastPlayed: row.last_played
+      lastPlayed: row.last_played,
+      byDifficulty: {}
+    };
+  }
+
+  for (const row of diffRows.results || []) {
+    if (!statsObj[row.module]) continue;
+    statsObj[row.module].byDifficulty[row.difficulty] = {
+      totalPlayed: row.total_played,
+      totalScore: row.total_score
     };
   }
 
@@ -66,16 +85,15 @@ export async function formatUserWithStats(db, user) {
 }
 
 /**
- * Aktivität für einen Tag erfassen oder aktualisieren.
- * Verwendet SELECT + UPDATE/INSERT statt ON CONFLICT, damit kein UNIQUE-Constraint
- * auf der Tabelle vorausgesetzt wird (robuster bei DB-Migrationen).
+ * Aktivität für einen Tag erfassen oder aktualisieren (pro Schwierigkeitsgrad).
+ * Verwendet SELECT + UPDATE/INSERT für Robustheit bei DB-Migrationen.
  */
-export async function upsertDailyActivity(db, userId, module, score, timestamp) {
+export async function upsertDailyActivity(db, userId, module, score, timestamp, difficulty = 'unknown') {
   const dateStr = getDateString(timestamp);
 
   const existing = await db
-    .prepare('SELECT id FROM daily_activity WHERE user_id = ? AND activity_date = ? AND module = ?')
-    .bind(userId, dateStr, module)
+    .prepare('SELECT id FROM daily_activity WHERE user_id = ? AND activity_date = ? AND module = ? AND difficulty = ?')
+    .bind(userId, dateStr, module, difficulty)
     .first();
 
   if (existing) {
@@ -92,10 +110,10 @@ export async function upsertDailyActivity(db, userId, module, score, timestamp) 
   } else {
     await db
       .prepare(`
-        INSERT INTO daily_activity (user_id, activity_date, module, games_played, total_score, last_updated)
-        VALUES (?, ?, ?, 1, ?, ?)
+        INSERT INTO daily_activity (user_id, activity_date, module, difficulty, games_played, total_score, last_updated)
+        VALUES (?, ?, ?, ?, 1, ?, ?)
       `)
-      .bind(userId, dateStr, module, score, timestamp)
+      .bind(userId, dateStr, module, difficulty, score, timestamp)
       .run();
   }
 

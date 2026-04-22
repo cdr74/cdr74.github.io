@@ -385,6 +385,27 @@ function renderActivityChart(activity) {
   `;
 }
 
+function renderDifficultyBreakdown(byDifficulty) {
+  if (!byDifficulty) return '';
+  const DIFF_LABELS = { easy: 'Leicht', medium: 'Mittel', hard: 'Schwer' };
+  const rows = ['easy', 'medium', 'hard']
+    .filter(d => byDifficulty[d] && byDifficulty[d].totalPlayed > 0)
+    .map(d => {
+      const data = byDifficulty[d];
+      const rate = Math.round(((data.totalScore / 10) / data.totalPlayed) * 100);
+      const cls = rate >= 80 ? 'good' : rate >= 50 ? 'medium' : 'bad';
+      return `
+        <div class="diff-row">
+          <span class="diff-label">${DIFF_LABELS[d]}</span>
+          <span class="diff-count">${data.totalPlayed}×</span>
+          <div class="metric-bar mini"><div class="metric-bar-fill ${cls}" style="width:${rate}%"></div></div>
+          <span class="diff-rate ${cls}">${rate}%</span>
+        </div>`;
+    });
+  if (rows.length === 0) return '';
+  return `<div class="difficulty-breakdown">${rows.join('')}</div>`;
+}
+
 function renderSuccessBar(successRate) {
   const pct = Math.min(100, Math.max(0, successRate));
   const cls = pct >= 80 ? 'good' : pct >= 50 ? 'medium' : 'bad';
@@ -424,6 +445,7 @@ function renderExerciseBreakdown(userStats, exerciseTotals30d) {
             ${successRate !== null ? `<span class="exercise-row-rate ${rateClass}">${successRate}%</span>` : ''}
           </div>
           ${successRate !== null ? renderSuccessBar(successRate) : ''}
+          ${renderDifficultyBreakdown(allTime.byDifficulty)}
           <div class="exercise-row-meta">${recentLabel}${avgTime ? ` · Ø ${avgTime}` : ''}</div>
         </div>
       </div>

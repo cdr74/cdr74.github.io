@@ -135,7 +135,7 @@ export function createDeutschModule(dependencies = {}) {
 
             // Track stats (non-blocking)
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-grammatik', 10).catch(err => {
+                statsTracker.trackGameCompletion('deutsch-grammatik', 10, state.difficulty).catch(err => {
                     console.error('Stats tracking failed:', err);
                 });
             }
@@ -146,7 +146,7 @@ export function createDeutschModule(dependencies = {}) {
 
             // Track wrong answer
             if (statsTracker && statsTracker.trackGameCompletion) {
-                statsTracker.trackGameCompletion('deutsch-grammatik', 0).catch(err => {
+                statsTracker.trackGameCompletion('deutsch-grammatik', 0, state.difficulty).catch(err => {
                     console.error('Stats tracking failed:', err);
                 });
             }

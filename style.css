@@ -705,6 +705,47 @@ select:focus, input:focus {
     margin-top: 0.15rem;
 }
 
+/* ─── Difficulty Breakdown ───────────────────────────────────── */
+.difficulty-breakdown {
+    margin: 0.35rem 0 0.1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.diff-row {
+    display: grid;
+    grid-template-columns: 3.2rem 2rem 1fr 2.4rem;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+}
+
+.diff-label {
+    color: var(--text-muted);
+}
+
+.diff-count {
+    color: var(--text-muted);
+    font-weight: 500;
+    text-align: right;
+}
+
+.metric-bar.mini {
+    height: 4px;
+    margin: 0;
+}
+
+.diff-rate {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+.diff-rate.good   { color: var(--success); }
+.diff-rate.medium { color: var(--warning); }
+.diff-rate.bad    { color: var(--error); }
+
 /* ─── Artikel Exercise ───────────────────────────────────────── */
 .artikel-options {
     display: flex;

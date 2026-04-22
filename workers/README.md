@@ -156,31 +156,51 @@ wrangler tail
 
 ## DB Migration
 
-SQLite unterstützt kein `ALTER TABLE DROP/MODIFY CONSTRAINT`. Bei Schema-Änderungen
-(z.B. neues Sub-Modul in `module_check`) muss die Tabelle neu erstellt werden.
+SQLite unterstützt kein `ALTER TABLE DROP/MODIFY CONSTRAINT`. Bei Schema-Änderungen muss die Tabelle neu erstellt werden.
+
+### difficulty-Spalte hinzufügen (Remote — einmalig ausführen)
+
+```bash
+# 1. Neue Tabelle mit difficulty-Spalte erstellen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE TABLE daily_activity_new (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, activity_date TEXT NOT NULL, module TEXT NOT NULL, difficulty TEXT NOT NULL DEFAULT 'unknown', games_played INTEGER NOT NULL DEFAULT 0, total_score INTEGER NOT NULL DEFAULT 0, last_updated INTEGER NOT NULL, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, CONSTRAINT module_check CHECK(module IN ('groessen','deutsch','deutsch-grammatik','deutsch-lesen','deutsch-artikel','deutsch-ordnen','deutsch-diktat')), CONSTRAINT difficulty_check CHECK(difficulty IN ('easy','medium','hard','unknown')), UNIQUE(user_id, activity_date, module, difficulty))"
+
+# 2. Bestehende Daten übernehmen (difficulty = 'unknown' für alle Altdaten)
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="INSERT INTO daily_activity_new (id, user_id, activity_date, module, difficulty, games_played, total_score, last_updated) SELECT id, user_id, activity_date, module, 'unknown', games_played, total_score, last_updated FROM daily_activity"
+
+# 3. Alte Tabelle ersetzen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP VIEW IF EXISTS module_stats"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP TABLE daily_activity"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="ALTER TABLE daily_activity_new RENAME TO daily_activity"
+
+# 4. Indizes neu erstellen
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_date ON daily_activity(user_id, activity_date DESC)"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_module ON daily_activity(user_id, module)"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_module_diff ON daily_activity(user_id, module, difficulty)"
+
+# 5. Worker deployen
+wrangler deploy --env=""
+```
+
+Das vollständige aktuelle Schema steht in `schema.sql`.
 
 ### Sub-Modul zu module_check hinzufügen (Remote)
 
 ```bash
-# 1. Neue Tabelle mit aktualisiertem Schema erstellen
+# 1. Neue Tabelle mit aktualisiertem Schema erstellen (alle Constraints anpassen)
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE TABLE daily_activity_new (...neues Schema...)"
 
 # 2. Daten kopieren
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="INSERT INTO daily_activity_new SELECT * FROM daily_activity"
 
-# 3. Falls vorhanden: module_stats VIEW droppen (blockiert Rename)
-wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP VIEW IF EXISTS module_stats"
-
-# 4. Alte Tabelle ersetzen
+# 3. Alte Tabelle ersetzen
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="DROP TABLE daily_activity"
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="ALTER TABLE daily_activity_new RENAME TO daily_activity"
 
-# 5. Indizes neu erstellen
+# 4. Indizes neu erstellen
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_date ON daily_activity(user_id, activity_date DESC)"
 wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_module ON daily_activity(user_id, module)"
+wrangler d1 execute cdr74-learning-db --env="" --remote --command="CREATE INDEX IF NOT EXISTS idx_daily_activity_user_module_diff ON daily_activity(user_id, module, difficulty)"
 ```
-
-Das vollständige aktuelle Schema steht in `schema.sql`.
 
 ## Troubleshooting
 
